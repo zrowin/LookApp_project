@@ -1,0 +1,20 @@
+{
+  "name": "lookapp",
+  "version": "0.1.0",
+  "description": "Bootstrap projektu LookApp - minimalny setup",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "echo \"No build step yet\"",
+    "test": "echo \"No tests yet\" && exit 0",
+    "install": "npm ci || npm install",
+    "install:windows": "powershell -ExecutionPolicy Bypass -File ./scripts/install.ps1",
+    "start:windows": "powershell -ExecutionPolicy Bypass -File ./scripts/start.ps1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "author": "",
+  "license": "MIT"
+}
