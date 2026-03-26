@@ -1,20 +1,40 @@
 {
   "name": "lookapp",
   "version": "0.1.0",
-  "description": "Bootstrap projektu LookApp - minimalny setup",
-  "main": "index.js",
+  "private": true,
+  "description": "LookApp - Virtual wardrobe and outfit builder SaaS application",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "echo \"No build step yet\"",
-    "test": "echo \"No tests yet\" && exit 0",
-    "install": "npm ci || npm install",
-    "install:windows": "powershell -ExecutionPolicy Bypass -File ./scripts/install.ps1",
-    "start:windows": "powershell -ExecutionPolicy Bypass -File ./scripts/start.ps1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@supabase/ssr": "~0.9.0",
+    "@supabase/supabase-js": "~2.100.1",
+    "clsx": "~2.1.1",
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "~3.5.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
-  },
-  "author": "",
-  "license": "MIT"
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8.4.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.0.0"
+  }
 }

@@ -1,32 +1,156 @@
-Autorzy projektu: Zuzanna Grześkowiak i Zofia Rowińska
+# LookApp
 
-# LookApp — Dokumentacja projektu (krótki przewodnik)
+A modern SaaS application for managing your virtual wardrobe and creating outfit combinations.
 
-Opis: LookApp to aplikacja web + mobile (SaaS) do zarządzania garderobą i tworzenia outfitów. Umożliwia użytkownikom wgrywanie zdjęć ubrań, automatyczne usuwanie tła, organizowanie wirtualnej garderoby, tworzenie stylizacji z realnych zdjęć oraz otrzymywanie wizualnych rekomendacji i inspiracji zakupowych.
+![LookApp](https://via.placeholder.com/800x400?text=LookApp+Screenshot)
 
-Spis treści (pliki w folderze `ZGZR`):
+## Tech Stack
 
-- [Competitor Audit — LookApp](Competitor_audit_LookApp.md) — analiza konkurencji i rekomendacje MVP.
-- [ICP & Persony — LookApp](ICP_Persona_LookApp.md) — profil idealnego klienta i główne persony.
-- [Job To Be Done — LookApp](Job_To_Be_Done_LookApp.md) — mapa zadań użytkownika, hipotezy i eksperymenty walidacyjne.
-- [Tech Stack Audit — LookApp](Tech_Stack_Audit_LookApp.md) — rekomendowany stack technologiczny, ryzyka i checklist.
-- [GTM Strategy](GTM_Strategy.md) — propozycje kanałów i planów wejścia na rynek.
-- [MVP Scoping](MVP_Scoping.md) — precyzyjne cięcie funkcji do minimalnego MVP.
-- [Monetization Strategy](Monetization_Strategy.md) — modele przychodowe, freemium i affiliate.
-- [Resource Analysis](Resource_Analysis.md) — oszacowanie zasobów i kosztów operacyjnych.
-- [User Journey Map](User_Journey_Map.md) — proponowana ścieżka użytkownika od onboardingu do retainmentu.
-- [Kill the idea — LookApp](Kill_the_idea-lookapp.md) — krytyczna analiza ryzyk i punktów do przeanalizowania przed inwestycją.
-- [Opis projektu — LookApp](opis-projektu-lookapp.md) — źródłowy opis produktu, MVP i założeń biznesowych.
+- **Framework**: [Next.js 14](https://nextjs.org/) with App Router
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (strict mode)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with custom design tokens
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Payments**: [Stripe](https://stripe.com/)
+- **State Management**: React hooks + context
+- **Code Quality**: ESLint, Prettier, TypeScript
 
-Jak używać tego README:
+## Features
 
-- Zacznij od `opis-projektu-lookapp.md`, aby zapoznać się z założeniami produktu.
-- Przejdź przez `WF` dokumenty: `Competitor Audit`, `ICP`, `Job To Be Done` i `Tech Stack Audit` — one definiują hipotezy i techniczne ograniczenia MVP.
-- Użyj `MVP_Scoping.md` i `Resource_Analysis.md` do zaplanowania pierwszych sprintów deweloperskich.
+- 📸 Upload and organize clothing photos
+- ✂️ Automatic background removal
+- 👗 Virtual wardrobe management
+- 🎨 Drag-and-drop outfit builder
+- 💾 Save and manage outfit combinations
+- 📱 Responsive design for mobile and desktop
+- 🔐 User authentication with Supabase Auth
+- 💳 Subscription management with Stripe
 
-Szybkie linki do zadań i checklist:
+## Getting Started
 
-- Checklist techniczna (z Tech Stack Audit): `Tech_Stack_Audit_LookApp.md` — sekcja "Checklist (przed deployem MVP)".
-- Checklist rynkowa (z Competitor Audit / GTM Strategy): `Competitor_audit_LookApp.md`, `GTM_Strategy.md`.
+### Prerequisites
 
+- Node.js 20 or later
+- npm, yarn, or pnpm
+- A Supabase project (for authentication and database)
+- A Stripe account (for payments)
 
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/lookapp.git
+cd lookapp
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Copy the environment variables template:
+
+```bash
+cp .env.example .env.local
+```
+
+4. Fill in your environment variables in `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+STRIPE_SECRET_KEY=your-stripe-secret-key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key
+```
+
+5. Start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Fix ESLint errors |
+| `npm run format` | Format code with Prettier |
+| `npm run type-check` | Run TypeScript type checking |
+
+## Project Structure
+
+```
+src/
+├── app/                      # Next.js App Router
+│   ├── (auth)/              # Auth routes group
+│   │   ├── login/
+│   │   ├── register/
+│   │   └── forgot-password/
+│   ├── (dashboard)/         # Protected routes
+│   │   ├── wardrobe/
+│   │   ├── outfit-builder/
+│   │   ├── outfits/
+│   │   └── settings/
+│   ├── layout.tsx           # Root layout
+│   └── page.tsx             # Landing/Home
+├── components/
+│   ├── ui/                  # Base UI components
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   └── input.tsx
+│   └── features/            # Feature-specific components
+│       ├── upload/
+│       ├── canvas/
+│       ├── wardrobe/
+│       └── outfits/
+├── hooks/                    # Custom React hooks
+│   └── useUser.ts
+├── lib/
+│   ├── supabase/            # Supabase client setup
+│   │   └── client.ts
+│   └── utils.ts             # Utility functions
+├── types/                    # TypeScript types
+│   └── index.ts
+└── middleware.ts             # Auth middleware
+```
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) | Yes |
+| `STRIPE_SECRET_KEY` | Stripe secret key | Yes |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | Yes |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Yes |
+| `NEXT_PUBLIC_APP_URL` | Application URL | No |
+| `NEXT_PUBLIC_APP_NAME` | Application name | No |
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Authors
+
+- Zuzanna Grześkowiak
+- Zofia Rowińska
+
+---
+
+Built with ❤️ for fashion enthusiasts everywhere.

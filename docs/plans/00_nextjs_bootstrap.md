@@ -1,6 +1,6 @@
 # 00 Bootstrap Next.js Application
 
-**Status:** 🟡 W trakcie
+**Status:** 🟢 Zakończony
 
 ## Opis
 
@@ -8,15 +8,15 @@ Inicjalizacja i konfiguracja projektu Next.js 14 z App Router, TypeScript i Tail
 
 ## Wymagania
 
-- [ ] Zainicjalizować projekt Next.js 14 z App Router
-- [ ] Skonfigurować TypeScript z strict mode
-- [ ] Skonfigurować Tailwind CSS z design tokens
-- [ ] Skonfigurować ESLint i Prettier
-- [ ] Skonfigurować Supabase client (tylko klient przeglądarkowy)
-- [ ] Utworzyć strukturę katalogów zgodnie z architekturą (frontend)
-- [ ] Utworzyć plik .env z wszystkimi wymaganymi zmiennymi
-- [ ] Skonfigurować GitHub Actions CI pipeline
-- [ ] Utworzyć README z instrukcjami uruchomienia
+- [x] Zainicjalizować projekt Next.js 14 z App Router
+- [x] Skonfigurować TypeScript z strict mode
+- [x] Skonfigurować Tailwind CSS z design tokens
+- [x] Skonfigurować ESLint i Prettier
+- [x] Skonfigurować Supabase client (tylko klient przeglądarkowy)
+- [x] Utworzyć strukturę katalogów zgodnie z architekturą (frontend)
+- [x] Utworzyć plik .env z wszystkimi wymaganymi zmiennymi
+- [x] Skonfigurować GitHub Actions CI pipeline
+- [x] Utworzyć README z instrukcjami uruchomienia
 
 ## Architektura
 
@@ -85,61 +85,61 @@ NEXT_PUBLIC_APP_NAME=LookApp
 
 ### Krok 1: Inicjalizacja Next.js
 
-- [ ] Zainstaluj Next.js 14 z App Router:
+- [x] Zainstaluj Next.js 14 z App Router:
   ```bash
   npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
   ```
-- [ ] Usuń domyślne pliki (page.tsx, globals.css) i zastąp je szkieletem
-- [ ] Skonfiguruj `tsconfig.json` z strict mode i paths aliases
+- [x] Usuń domyślne pliki (page.tsx, globals.css) i zastąp je szkieletem
+- [x] Skonfiguruj `tsconfig.json` z strict mode i paths aliases
 
 ### Krok 2: Konfiguracja Stylów
 
-- [ ] Skonfiguruj Tailwind CSS z custom design tokens (kolory brandowe, spacing, fonty)
-- [ ] Utwórz `src/app/globals.css` z base styles
-- [ ] Utwórz komponent `src/lib/utils.ts` z helperami (cn, format date, etc.)
-- [ ] Skonfiguruj CSS variables dla theming
+- [x] Skonfiguruj Tailwind CSS z custom design tokens (kolory brandowe, spacing, fonty)
+- [x] Utwórz `src/app/globals.css` z base styles
+- [x] Utwórz komponent `src/lib/utils.ts` z helperami (cn, format date, etc.)
+- [x] Skonfiguruj CSS variables dla theming
 
 ### Krok 3: Struktura Katalogów
 
-- [ ] Utwórz strukturę `src/components/ui/` z base components
-- [ ] Utwórz strukturę `src/components/features/` (pusta na razie)
-- [ ] Utwórz strukturę `src/hooks/`
-- [ ] Utwórz strukturę `src/types/`
+- [x] Utwórz strukturę `src/components/ui/` z base components
+- [x] Utwórz strukturę `src/components/features/` (pusta na razie)
+- [x] Utwórz strukturę `src/hooks/`
+- [x] Utwórz strukturę `src/types/`
 
 ### Krok 4: Konfiguracja Supabase (Frontend)
 
-- [ ] Zainstaluj `@supabase/supabase-js`
-- [ ] Utwórz `src/lib/supabase/client.ts` - przeglądarkowy klient
-- [ ] Utwórz `src/middleware.ts` dla obsługi sesji
-- [ ] Utwórz helper hooks `useUser()`, `useSession()` dla components
+- [x] Zainstaluj `@supabase/supabase-js`
+- [x] Utwórz `src/lib/supabase/client.ts` - przeglądarkowy klient
+- [x] Utwórz `src/middleware.ts` dla obsługi sesji
+- [x] Utwórz helper hooks `useUser()`, `useSession()` dla components
 
 > **Uwaga:** Konfiguracja backendu (server.ts z service role, API routes) znajduje się w planie [01 - Upload i Background Removal](docs/plans/01_upload_and_bg_removal.md).
 
 ### Krok 5: Root Layout i Strona Główna
 
-- [ ] Utwórz `src/app/layout.tsx` z Providers (SessionProvider, ThemeProvider)
-- [ ] Utwórz `src/app/page.tsx` jako landing page (tymczasowy)
-- [ ] Dodaj favicon i meta tagi
+- [x] Utwórz `src/app/layout.tsx` z Providers (SessionProvider, ThemeProvider)
+- [x] Utwórz `src/app/page.tsx` jako landing page (tymczasowy)
+- [x] Dodaj favicon i meta tagi
 
 ### Krok 6: Konfiguracja ESLint i Prettier
 
-- [ ] Skonfiguruj `.eslintrc.json` z React, TypeScript, Next.js rules
-- [ ] Skonfiguruj `.prettierrc` z formatowaniem
-- [ ] Dodaj npm scripts: `lint`, `lint:fix`, `format`
+- [x] Skonfiguruj `.eslintrc.json` z React, TypeScript, Next.js rules
+- [x] Skonfiguruj `.prettierrc` z formatowaniem
+- [x] Dodaj npm scripts: `lint`, `lint:fix`, `format`
 
 ### Krok 7: CI/CD Pipeline
 
-- [ ] Utwórz `.github/workflows/ci.yml` z pipeline:
+- [x] Utwórz `.github/workflows/ci.yml` z pipeline:
   - lint
   - type-check
   - test
   - build
-- [ ] Skonfiguruj Vercel deployment (opcjonalnie)
+- [x] Skonfiguruj Vercel deployment (opcjonalnie)
 
 ### Krok 8: Dokumentacja
 
-- [ ] Utwórz `.env.example` z wszystkimi wymaganymi zmiennymi
-- [ ] Zaktualizuj `README.md` z:
+- [x] Utwórz `.env.example` z wszystkimi wymaganymi zmiennymi
+- [x] Zaktualizuj `README.md` z:
   - Screenshootem projektu
   - Opisem tech stacka
   - Instrukcjami instalacji (npm install)
@@ -149,10 +149,10 @@ NEXT_PUBLIC_APP_NAME=LookApp
 
 ### Krok 9: Walidacja
 
-- [ ] Zweryfikuj że `npm run dev` uruchamia się bez błędów
-- [ ] Zweryfikuj że `npm run build` buduje projekt poprawnie
-- [ ] Zweryfikuj że `npm run lint` nie zwraca błędów
-- [ ] Sprawdź czy strona główna renderuje się poprawnie
+- [x] Zweryfikuj że `npm run dev` uruchamia się bez błędów
+- [x] Zweryfikuj że `npm run build` buduje projekt poprawnie
+- [x] Zweryfikuj że `npm run lint` nie zwraca błędów
+- [x] Sprawdź czy strona główna renderuje się poprawnie
 
 ## Punkty do dyskusji
 
