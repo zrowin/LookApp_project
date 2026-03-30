@@ -1,3 +1,36 @@
+Cel: szczegółowy opis struktury tego repozytorium LookApp oraz praktyczne wskazówki uruchamiania i utrzymania.
+14) Graficzna struktura projektu
+Poniżej znajduje się graficzna reprezentacja głównych katalogów i istotnych plików w repozytorium (Mermaid):
+```mermaid
+graph TD
+  repo[LookApp_project]
+  repo --> docs[docs/]
+  repo --> src[src/]
+  repo --> scripts[scripts/]
+  repo --> tech_reqs[tech_reqs/]
+  repo --> tests[tests/]
+  repo --> package_json[package.json]
+  repo --> readme[README.md]
+
+  docs --> docs_files[Docs files]
+  docs --> docs_plans[plans/]
+  docs_plans --> plan01[01_upload_and_bg_removal.md]
+  docs_plans --> plan02[02_auto_tagging.md]
+
+  src --> src_index[index.js]
+  src --> controllers[controllers/]
+
+  scripts --> install_ps1[install.ps1]
+  scripts --> start_ps1[start.ps1]
+
+  tests --> example_test[example.test.js]
+  tests --> fixtures[fixtures/]
+
+  tech_reqs --> tech_req_file[technical_requirements.md]
+
+  classDef folder fill:#f9f,stroke:#333,stroke-width:1px;
+  class docs,src,scripts,tech_reqs,tests folder
+```
 # Files_Structure
 
 Cel: szczegółowy opis struktury tego repozytorium LookApp oraz praktyczne wskazówki uruchamiania i utrzymania.
@@ -157,4 +190,3 @@ console.log('example.test.js: OK');
 13) Propozycje następnych kroków
 - Zaktualizować `package.json` aby `npm test` uruchamiało przykładowe testy (`node tests/example.test.js`).
 - Uzupełnić `CODEOWNERS` rzeczywistymi GitHub handle'ami.
-
