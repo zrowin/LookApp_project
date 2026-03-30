@@ -1,0 +1,6 @@
+{
+  "sample": true,
+  "items": [
+    { "id": 1, "name": "Example Item" }
+  ]
+}

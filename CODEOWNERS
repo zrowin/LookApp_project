@@ -1,0 +1,9 @@
+# CODEOWNERS
+# Replace the placeholders with actual GitHub usernames (without <>).
+# Example: /docs/ @github-username
+# Suggested owners (replace with GitHub handles):
+# docs/: Zuzanna Grześkowiak <zuzia@example.com>
+# scripts/: Zofia Rowińska <zofia@example.com>
+
+# Default fallback (uncomment and replace to enable):
+# * @org/team

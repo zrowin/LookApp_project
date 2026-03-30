@@ -17,6 +17,7 @@ Spis treści (pliki w folderze `ZGZR`):
 - [User Journey Map](docs/User_Journey_Map.md) — proponowana ścieżka użytkownika od onboardingu do retainmentu.
 - [Kill the idea — LookApp](docs/Kill_the_idea-lookapp.md) — krytyczna analiza ryzyk i punktów do przeanalizowania przed inwestycją.
 - [Opis projektu — LookApp](docs/opis-projektu-lookapp.md) — źródłowy opis produktu, MVP i założeń biznesowych.
+- [Files Structure](docs/Files_Structure.md) — opis struktury plików repozytorium i konwencje (szczegóły dla deweloperów).
 
 Jak używać tego README:
 

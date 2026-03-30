@@ -68,5 +68,24 @@ Notes: uwagi dotyczące konwencji i zależności
 15. Weryfikacja
 - Przy code review sprawdzamy, czy struktura i opis są spójne. Brak dokumentacji katalogu — prośba o dopisanie do PR.
 
+16. Zasady dla agenta przygotowującego opis struktury dokumentów
+- Cel: dostarczyć jednolitą, powtarzalną procedurę, której agent będzie przestrzegać przy generowaniu opisów struktury repozytorium i katalogów.
+- Krok 1 — Skan repozytorium: zbierz listę plików i katalogów na najwyższym poziomie oraz sprawdź zawartość `docs/`, `scripts/`, `tech_reqs/` i innych istotnych katalogów.
+- Krok 2 — Kluczowe pliki: zidentyfikuj i opisz pliki startowe (np. `README.md`, `package.json`, `index.js`, `Dockerfile`, `docker-compose.yml`, skrypty w `scripts/`).
+- Krok 3 — Drzewo katalogów: wygeneruj czytelne drzewo (maksymalnie 3 poziomy) z krótkimi opisami celu każdego katalogu.
+- Krok 4 — Konwencje: wypisz przyjęte konwencje (nazewnictwo, format plików, lokalizacje konfiguracji, sposób przechowywania sekretów) i wskaż miejsce dokumentujące wybór (np. `CONTRIBUTING.md`).
+- Krok 5 — Uruchamianie i skrypty: podaj istotne polecenia do lokalnego uruchomienia (z `package.json` i `scripts/`) oraz krótkie instrukcje dla Windows i cross-platform.
+- Krok 6 — Testy i fixtures: wskaż lokalizację testów i danych testowych (np. `tests/`, `tests/fixtures`).
+- Krok 7 — Zasoby i binaria: zidentyfikuj duże pliki/binaria i opisz, gdzie je pozyskać (LFS / zewnętrzne storage).
+- Krok 8 — Bezpieczeństwo: sprawdź, czy w repo nie ma plików zawierających sekrety; jeśli występują, zgłoś je i wskaż `.env.example` jako wzorzec.
+- Krok 9 — Właściciele i review: jeśli brakuje `CODEOWNERS`, zaproponuj jego utworzenie lub wpis w `docs/` wskazujący właścicieli katalogów.
+- Krok 10 — Zmiany struktury: jeśli proponujesz zmiany przekraczające 1 poziom katalogów, dołącz listę wpływów na CI/build i proponowaną procedurę migracji.
+- Dodatkowe zasady redakcyjne dla agenta:
+  - używaj prostego, zwięzłego języka; preferuj listy punktowane i krótkie przykłady komend;
+  - zamieszczaj odnośniki do istniejącej dokumentacji (`docs/`, `tech_reqs/`);
+  - generuj przykładowy szablon `README` dla nowych katalogów (Purpose, Important files, How to run, Notes);
+  - przy wątpliwościach zadawaj 2–3 konkretne pytania użytkownikowi zamiast zgadywać;
+  - nie modyfikuj istniejących plików bez wyraźnej zgody — jedynie proponuj zmiany i pliki pomocnicze (np. `CODEOWNERS`, `CONTRIBUTING.md`).
+
 -----------------
 Plik ten powinien być utrzymywany krótki i praktyczny. Celem jest szybkie onboardowanie i konsekwencja między repozytoriami.
