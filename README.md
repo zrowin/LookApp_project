@@ -4,6 +4,23 @@ A modern SaaS application for managing your virtual wardrobe and creating outfit
 
 ![LookApp](https://via.placeholder.com/800x400?text=LookApp+Screenshot)
 
+## Spis treści — Business Analysis
+
+Poniżej krótki spis plików z folderu [docs/business-analysis](docs/business-analysis) z bardzo krótkim opisem zawartości:
+
+- [Competitor_audit_LookApp.md](docs/business-analysis/Competitor_audit_LookApp.md): Analiza konkurencji — kluczowe insighty i lista konkurentów.
+- [Files_Structure.md](docs/business-analysis/Files_Structure.md): Opis struktury repozytorium i wskazówki uruchomienia.
+- [GTM_Strategy.md](docs/business-analysis/GTM_Strategy.md): Strategia wejścia na rynek, cele i plan na pierwsze miesiące.
+- [ICP_Persona_LookApp.md](docs/business-analysis/ICP_Persona_LookApp.md): Profil idealnego klienta (ICP) i persony z rekomendacjami.
+- [Job_To_Be_Done_LookApp.md](docs/business-analysis/Job_To_Be_Done_LookApp.md): Krótkie mapowanie "Job To Be Done" i hipotezy walidacyjne.
+- [Kill_the_idea-lookapp.md](docs/business-analysis/Kill_the_idea-lookapp.md): Pre‑mortem — analiza ryzyk i możliwych przyczyn porażki.
+- [Monetization_Strategy.md](docs/business-analysis/Monetization_Strategy.md): Propozycje modelu przychodów i struktury tiery.
+- [MVP_Scoping.md](docs/business-analysis/MVP_Scoping.md): Zakres MVP i kluczowe metryki walidacyjne.
+- [opis-projektu-lookapp.md](docs/business-analysis/opis-projektu-lookapp.md): Krótki opis projektu, cele i docelowy użytkownik.
+- [Resource_Analysis.md](docs/business-analysis/Resource_Analysis.md): Analiza zasobów i plan działania.
+- [Tech_Stack_Audit_LookApp.md](docs/business-analysis/Tech_Stack_Audit_LookApp.md): Rekomendacje stacku technologicznego dla MVP.
+- [User_Journey_Map.md](docs/business-analysis/User_Journey_Map.md): Mapa ścieżki użytkownika i kluczowe metryki sukcesu.
+
 ## Tech Stack
 
 - **Framework**: [Next.js 14](https://nextjs.org/) with App Router
@@ -154,3 +171,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 Built with ❤️ for fashion enthusiasts everywhere.
+
+
