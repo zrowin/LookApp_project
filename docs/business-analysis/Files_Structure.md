@@ -41,6 +41,20 @@ Cel: szczegółowy opis struktury tego repozytorium LookApp oraz praktyczne wska
 - `package.json` — zależności i skrypty (m.in. `start`, `dev`, `install:windows`, `start:windows`).
 - `README.md` — dokumentacja wysokiego poziomu projektu i linki do szczegółowych dokumentów w `docs/`.
 
+ 1.1) Dodatkowe pliki konfiguracyjne i pomocnicze (nowe / warte odnotowania)
+ - `.env.example` — wzorzec zmiennych środowiskowych (użyj jako szablonu, nie commituj sekretów).
+ - `.env.local` — plik lokalny (nie powinien być committowany) z ustawieniami deweloperskimi.
+ - `.eslintrc.json` — konfiguracja ESLint dla projektu.
+ - `.prettierrc` / `.prettierignore` — konfiguracja Prettier i listy ignorowanych plików.
+ - `tsconfig.json` / `next-env.d.ts` — konfiguracja TypeScript dla Next.js.
+ - `next.config.js` — konfiguracja Next.js (ustawienia build/rewrites/experimental features).
+ - `tailwind.config.ts` / `postcss.config.js` — konfiguracja Tailwind CSS i PostCSS.
+ - `package-lock.json` — plik lock dependency wygenerowany przez npm (śledzić dla deterministycznych instalacji).
+ - `.gitignore` — lista plików/katalogów ignorowanych przez Git.
+ - `.github/` — workflowy CI/CD i szablony PR/ISSUE (jeśli obecne, warto przejrzeć dla CI).
+ - `CODEOWNERS` / `CONTRIBUTING.md` — wskazują właścicieli i zasady współpracy (ważne dla review i konwencji).
+ - `.kilocode/` — katalog narzędzi/metadanych (projektowo‑specyficzny, sprawdź zawartość przed modyfikacją).
+
  2) Struktura katalogów (szczegóły)
 - `docs/` — dokumentacja projektowa:
   - `Competitor_audit_LookApp.md`, `GTM_Strategy.md`, `ICP_Persona_LookApp.md` itd. — analiza, strategie i wymagania biznesowe.
