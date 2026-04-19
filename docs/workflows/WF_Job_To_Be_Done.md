@@ -1,5 +1,20 @@
 # WF_Job_To_Be_Done
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [WF_Files_Structure.md](WF_Files_Structure.md)
+	- [WF_Competitor_Audit.md](WF_Competitor_Audit.md)
+	- [WF_Idea_Generation.md](WF_Idea_Generation.md)
+	- [WF_ICP_Persona.md](WF_ICP_Persona.md)
+	- [WF_ICE_Ranking.md](WF_ICE_Ranking.md)
+	- [WF_GTM_Strategy.md](WF_GTM_Strategy.md)
+	- [WF_Kill_The_Idea.md](WF_Kill_The_Idea.md)
+	- [WF_Monetization_Strategy.md](WF_Monetization_Strategy.md)
+	- [WF_MVP_Scoping.md](WF_MVP_Scoping.md)
+	- [WF_Resource_Analysis.md](WF_Resource_Analysis.md)
+	- [WF_Tech_Stack_Audit.md](WF_Tech_Stack_Audit.md)
+
 **Cel:** Zidentyfikować rzeczywiste zadania, które użytkownicy próbują zrealizować, oraz warunki sukcesu (desired outcomes). Skonstruowane z myślą o Solo-Deva: szybko, mierzalnie i nastawione na walidację hipotez.
 
 **Jak używać:** Wypełnij sekcje dla jednego ICP (Ideal Customer Profile). Zbierz 5–10 krótkich wywiadów lub obserwacji produktu, a następnie wpisz je w szablon "Job Snapshot". Skup się na kontekście, motywacjach i kryteriach sukcesu.

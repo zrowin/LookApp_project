@@ -1,3 +1,51 @@
+# Files Structure
+
+## Nawigacja
+ - Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+ - Inne w tym folderze:
+   - [Competitor_audit_LookApp.md](Competitor_audit_LookApp.md)
+   - [GTM_Strategy.md](GTM_Strategy.md)
+   - [ICP_Persona_LookApp.md](ICP_Persona_LookApp.md)
+   - [Job_To_Be_Done_LookApp.md](Job_To_Be_Done_LookApp.md)
+   - [Kill_the_idea-lookapp.md](Kill_the_idea-lookapp.md)
+   - [Monetization_Strategy.md](Monetization_Strategy.md)
+   - [MVP_Scoping.md](MVP_Scoping.md)
+   - [opis-projektu-lookapp.md](opis-projektu-lookapp.md)
+   - [Resource_Analysis.md](Resource_Analysis.md)
+   - [Tech_Stack_Audit_LookApp.md](Tech_Stack_Audit_LookApp.md)
+   - [User_Journey_Map.md](User_Journey_Map.md)
+Cel: szczegółowy opis struktury tego repozytorium LookApp oraz praktyczne wskazówki uruchamiania i utrzymania.
+1) Główne pliki
+- `index.js` — prosty HTTP server używany jako lokalny entrypoint dla MVP.
+- `package.json` — zależności i skrypty (m.in. `start`, `dev`, `install:windows`, `start:windows`).
+2) Kluczowe katalogi i ich zawartość
+- `docs/` — dokumentacja projektowa i procesowa:
+  - analizy i strategie (`Competitor_audit_LookApp.md`, `GTM_Strategy.md`)
+  - `plans/` — opis funkcjonalności i roadmapa
+3) Zalecane katalogi kodu (dla przyszłego rozwoju)
+- `src/` — kod źródłowy (zalecana struktura: `src/controllers`, `src/services`, `src/models`, `src/utils`).
+- `tests/` — testy jednostkowe/integracyjne; `tests/fixtures` dla danych testowych.
+4) Konwencje i praktyki
+- Język: angielski dla nazw katalogów i technicznych plików (`docs`, `src`, `tests`).
+- Nazwy plików: preferowane `kebab-case` dla dokumentacji i skryptów; techniczne zasady zapisujemy w `CONTRIBUTING.md`.
+5) Uruchomienie lokalne (ważne komendy)
+Windows (PowerShell):
+```
+npm run install:windows
+npm run start:windows
+```
+6) Szablon `README.md` dla katalogu
+- Purpose: krótki opis celu katalogu
+- Important files: lista najważniejszych plików
+7) Zasady dla agenta przygotowującego opis struktury dokumentów
+- Cel: dostarczyć jednolitą procedurę, której agent będzie przestrzegać przy generowaniu opisów struktury repozytorium i katalogów.
+- Krok 1 — Skan repozytorium: zebrać listę plików i katalogów na najwyższym poziomie oraz przejrzeć `docs/`, `scripts/`, `tech_reqs/` i inne istotne katalogi.
+8) Weryfikacja i odpowiedzialność
+- Przypisz właścicieli katalogów w `CODEOWNERS` lub w `docs/` (np. kto odpowiada za `docs/`, `scripts/`, `tech_reqs/`).
+- Przy code review sprawdzaj spójność opisu i aktualność dokumentacji.
+9) Gdzie szukać dalszych informacji
+- Szczegółowe zasady i checklisty: [docs/workflows/WF_Files_Structure.md](docs/workflows/WF_Files_Structure.md)
+- Wymagania techniczne: [tech_reqs/technical_requirements.md](tech_reqs/technical_requirements.md)
 # Files_Structure
 
 Cel: szczegółowy opis struktury tego repozytorium LookApp oraz praktyczne wskazówki uruchamiania i utrzymania.

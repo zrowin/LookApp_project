@@ -1,5 +1,20 @@
 # Competitor Audit — LookApp
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+  - [Files_Structure.md](Files_Structure.md)
+  - [GTM_Strategy.md](GTM_Strategy.md)
+  - [ICP_Persona_LookApp.md](ICP_Persona_LookApp.md)
+  - [Job_To_Be_Done_LookApp.md](Job_To_Be_Done_LookApp.md)
+  - [Kill_the_idea-lookapp.md](Kill_the_idea-lookapp.md)
+  - [Monetization_Strategy.md](Monetization_Strategy.md)
+  - [MVP_Scoping.md](MVP_Scoping.md)
+  - [opis-projektu-lookapp.md](opis-projektu-lookapp.md)
+  - [Resource_Analysis.md](Resource_Analysis.md)
+  - [Tech_Stack_Audit_LookApp.md](Tech_Stack_Audit_LookApp.md)
+  - [User_Journey_Map.md](User_Journey_Map.md)
+
 **Data:** 24 stycznia 2026
 
 ## Summary

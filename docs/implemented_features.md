@@ -2,7 +2,10 @@
 
 Lista wszystkich zaimplementowanych funkcjonalności projektu LookApp.
 
----
+## Mapa dokumentów
+
+- Full navigation: [Mapa dokumentów — NAVIGATION.md](NAVIGATION.md)
+
 
 ## [00] Bootstrap Next.js Application
 
@@ -23,3 +26,46 @@ Lista wszystkich zaimplementowanych funkcjonalności projektu LookApp.
 - **Status:** ✅ Ukończone
 
 ---
+
+## Lista zadań do wdrożenia (checkboxy)
+
+Poniższa lista zadań powstała na podstawie [docs/implemented_plans.md](docs/implemented_plans.md). Każdy punkt można oznaczyć jako wykonany poprzez zaznaczenie checkboxa.
+
+### 01 - Dodawanie zdjęć ubrań
+- [ ] Stworzyć UI uploadu w src/components/features/upload (drag & drop, podgląd, pasek postępu)
+- [ ] Backend: endpoint do przyjmowania plików i zapis w storage; zapis metadanych (owner, nazwa pliku, wymiary, rozmiar, hash, timestamp)
+- [ ] Implementować generowanie miniatur i wersji webp; ustawić limit rozmiaru i walidację typów
+- [ ] Przygotować schemat DB/Dexie.js dla `clothing_items` i mechanizm opcjonalnej synchronizacji z backendem
+- [ ] (Opcjonalne) Integracja z serwisem do usuwania tła (background removal)
+- [ ] Napisać testy akceptacyjne: upload działa, plik w storage, poprawne metadane
+
+### 02 - Kategoryzacja ubrań (tagowanie)
+- [ ] Zaprojektować model danych: `categories`, `tags` oraz relacje wiele-do-wielu z `clothing_items`
+- [ ] Dodać UI do edycji metadanych i przypisywania tagów (widok pojedynczy + bulk edit)
+- [ ] Implementować endpoint/autotagger zwracający proponowane tagi (integracja z ML lub zewnętrznym serwisem)
+- [ ] Rozszerzyć wyszukiwanie i filtry o kategorię, tagi, kolor i materiał
+- [ ] Przygotować migracje DB / aktualizację schematu Dexie.js
+- [ ] Napisać testy akceptacyjne: ręczne tagowanie i autotagging, filtry działają poprawnie
+
+### 03 - Dobieranie zdjęć — tworzenie stroju (Outfit Builder)
+- [ ] Zaprojektować model danych: tabela `outfits` z listą `clothing_item_ids` i metadanymi (nazwa, opis, cover image, owner, timestamp)
+- [ ] Zaimplementować UI buildera w `src/components/features/outfits` (canvas/siatka, drag&drop, pozycjonowanie)
+- [ ] Wstępny silnik dopasowań: reguły heurystyczne (np. nie łączyć dwóch spodni)
+- [ ] Rozszerzyć opcjonalnie o rekomendacje ML (kolor harmony, styl, okazja)
+- [ ] Dodać funkcje zapisu wersji, udostępniania linków i eksportu do mediów społecznościowych
+- [ ] Napisać testy akceptacyjne: tworzenie, zapis i ponowne ładowanie outfitów
+
+### 04 - Komunikaty i informacje zwrotne (UX feedback)
+- [ ] Wybrać lub stworzyć komponent powiadomień (`Toast`) oraz hook `useToast` w `src/components/ui` lub `src/hooks`
+- [ ] Zintegrować powiadomienia z kluczowymi akcjami: upload, autotagging, zapis outfitów, synchronizacja
+- [ ] Dodać dostępność (role ARIA, czytelność dla czytników ekranowych, opcje timeoutu)
+- [ ] Zaimplementować globalny provider/context do wywoływania komunikatów z dowolnego miejsca aplikacji
+- [ ] (Opcjonalne) Dodać historię komunikatów lub panel debugowy do szczegółowych logów
+- [ ] Napisać testy akceptacyjne: komunikaty pojawiają się i są czytelne dla dostępności
+
+---
+
+Jeśli chcesz, mogę teraz:
+- zaktualizować statusy w TODO (oznaczyć krok 1 jako ukończony),
+- albo od razu oznaczyć wszystkie kroki w planie jako rozpoczęte/ukończone.
+

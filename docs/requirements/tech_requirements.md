@@ -1,5 +1,10 @@
 # LookApp — Wymagania Techniczne
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+  - [tech_requirements.md](tech_requirements.md)
+
 **Wersja:** 1.0  
 **Data:** 2026-03-26  
 **Autor:** Architektura Techniczna  

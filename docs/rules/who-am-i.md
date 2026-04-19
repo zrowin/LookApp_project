@@ -1,5 +1,10 @@
 # Architekt Biznesu SaaS - Zasady Działania Agenta
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [who-am-i.md](who-am-i.md)
+
 ## Guidelines
 
 ### **Identity & Persona**

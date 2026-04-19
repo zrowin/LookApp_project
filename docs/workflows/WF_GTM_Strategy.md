@@ -1,6 +1,21 @@
 ```markdown
 # WF_GTM_Strategy
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [WF_Files_Structure.md](WF_Files_Structure.md)
+	- [WF_Competitor_Audit.md](WF_Competitor_Audit.md)
+	- [WF_Idea_Generation.md](WF_Idea_Generation.md)
+	- [WF_ICP_Persona.md](WF_ICP_Persona.md)
+	- [WF_ICE_Ranking.md](WF_ICE_Ranking.md)
+	- [WF_Kill_The_Idea.md](WF_Kill_The_Idea.md)
+	- [WF_Job_To_Be_Done.md](WF_Job_To_Be_Done.md)
+	- [WF_Monetization_Strategy.md](WF_Monetization_Strategy.md)
+	- [WF_MVP_Scoping.md](WF_MVP_Scoping.md)
+	- [WF_Resource_Analysis.md](WF_Resource_Analysis.md)
+	- [WF_Tech_Stack_Audit.md](WF_Tech_Stack_Audit.md)
+
 **Cel:** Przygotowanie powtarzalnej, wykonawczej strategii Go‑To‑Market dla produktu SaaS, gotowej do wdrożenia przez zespół solo‑foundera lub mały zespół.
 
 ### **1. Szybkie założenia (Preflight)**

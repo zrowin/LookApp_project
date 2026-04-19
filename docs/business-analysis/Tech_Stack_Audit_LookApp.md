@@ -1,5 +1,20 @@
 # Tech Stack Audit — LookApp
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+  - [Competitor_audit_LookApp.md](Competitor_audit_LookApp.md)
+  - [Files_Structure.md](Files_Structure.md)
+  - [GTM_Strategy.md](GTM_Strategy.md)
+  - [ICP_Persona_LookApp.md](ICP_Persona_LookApp.md)
+  - [Job_To_Be_Done_LookApp.md](Job_To_Be_Done_LookApp.md)
+  - [Kill_the_idea-lookapp.md](Kill_the_idea-lookapp.md)
+  - [Monetization_Strategy.md](Monetization_Strategy.md)
+  - [MVP_Scoping.md](MVP_Scoping.md)
+  - [opis-projektu-lookapp.md](opis-projektu-lookapp.md)
+  - [Resource_Analysis.md](Resource_Analysis.md)
+  - [User_Journey_Map.md](User_Journey_Map.md)
+
 Krótka, praktyczna rekomendacja stacku dla LookApp oparta na `WF_Tech_Stack_Audit.md` i opisie projektu. Cel: MVP uruchomiony szybko, z przewidywalnymi kosztami i możliwą późniejszą ewolucją.
 
 ## Podsumowanie rekomendacji

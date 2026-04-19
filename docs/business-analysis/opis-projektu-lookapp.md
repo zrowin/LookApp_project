@@ -1,5 +1,20 @@
 # LookApp — opis projektu
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [Competitor_audit_LookApp.md](Competitor_audit_LookApp.md)
+	- [Files_Structure.md](Files_Structure.md)
+	- [GTM_Strategy.md](GTM_Strategy.md)
+	- [ICP_Persona_LookApp.md](ICP_Persona_LookApp.md)
+	- [Job_To_Be_Done_LookApp.md](Job_To_Be_Done_LookApp.md)
+	- [Kill_the_idea-lookapp.md](Kill_the_idea-lookapp.md)
+	- [Monetization_Strategy.md](Monetization_Strategy.md)
+	- [MVP_Scoping.md](MVP_Scoping.md)
+	- [Resource_Analysis.md](Resource_Analysis.md)
+	- [Tech_Stack_Audit_LookApp.md](Tech_Stack_Audit_LookApp.md)
+	- [User_Journey_Map.md](User_Journey_Map.md)
+
 ## Cel produktu
 
 LookApp to aplikacja web + mobile (SaaS) do zarządzania garderobą i tworzenia outfitów. Umożliwia użytkownikom wgrywanie zdjęć ubrań, organizowanie ich w wirtualnej garderobie, tworzenie stylizacji z realnych zdjęć oraz otrzymywanie wizualnych rekomendacji i inspiracji zakupowych.

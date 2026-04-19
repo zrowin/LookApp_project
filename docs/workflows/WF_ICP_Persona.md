@@ -1,4 +1,19 @@
-## WF_ICP_Persona — Definiowanie Idealnego Klienta (ICP) i Jego Problemów
+# WF_ICP_Persona — Definiowanie Idealnego Klienta (ICP) i Jego Problemów
+
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [WF_Files_Structure.md](WF_Files_Structure.md)
+	- [WF_Competitor_Audit.md](WF_Competitor_Audit.md)
+	- [WF_Idea_Generation.md](WF_Idea_Generation.md)
+	- [WF_ICE_Ranking.md](WF_ICE_Ranking.md)
+	- [WF_GTM_Strategy.md](WF_GTM_Strategy.md)
+	- [WF_Kill_The_Idea.md](WF_Kill_The_Idea.md)
+	- [WF_Job_To_Be_Done.md](WF_Job_To_Be_Done.md)
+	- [WF_Monetization_Strategy.md](WF_Monetization_Strategy.md)
+	- [WF_MVP_Scoping.md](WF_MVP_Scoping.md)
+	- [WF_Resource_Analysis.md](WF_Resource_Analysis.md)
+	- [WF_Tech_Stack_Audit.md](WF_Tech_Stack_Audit.md)
 
 **Cel:** Dostarczyć powtarzalną procedurę definiowania Ideal Customer Profile (ICP) oraz mapowania kluczowych problemów i ich priorytetyzacji, tak aby Solo‑Dev mógł szybko przejść do badań, eksperymentów i GTM.
 

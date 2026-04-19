@@ -15,14 +15,26 @@
 ---
 
 ## Positioning & Messaging
-- One‑liner: "Zarządzaj swoją szafą i twórz stylizacje z użyciem zdjęć — szybciej niż kiedykolwiek."
-- 3 kluczowe korzyści:
   1. Szybkie tworzenie outfitów z własnych zdjęć (<5 minut do Aha).
   2. Automatyczne usuwanie tła + prosty canvas do łączenia elementów.
   3. Rekomendacje i linki zakupowe, które ułatwiają uzupełnienie braków.
 
----
+# GTM Strategy
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+  - [Competitor_audit_LookApp.md](Competitor_audit_LookApp.md)
+  - [Files_Structure.md](Files_Structure.md)
+  - [ICP_Persona_LookApp.md](ICP_Persona_LookApp.md)
+  - [Job_To_Be_Done_LookApp.md](Job_To_Be_Done_LookApp.md)
+  - [Kill_the_idea-lookapp.md](Kill_the_idea-lookapp.md)
+  - [Monetization_Strategy.md](Monetization_Strategy.md)
+  - [MVP_Scoping.md](MVP_Scoping.md)
+  - [opis-projektu-lookapp.md](opis-projektu-lookapp.md)
+  - [Resource_Analysis.md](Resource_Analysis.md)
+  - [Tech_Stack_Audit_LookApp.md](Tech_Stack_Audit_LookApp.md)
+  - [User_Journey_Map.md](User_Journey_Map.md)
 ## 3 kanały do natychmiastowego testu (High‑Priority)
 1. Micro‑influencer partnerships (Instagram/TikTok): płatne / wymiana za early access — KPI: CPC/CPA, sign‑ups per post.
 2. Community & Organic (Facebook groups, Reddit r/fashion, subreddity lokalne): angażujące posty + CTA do „try sample”.

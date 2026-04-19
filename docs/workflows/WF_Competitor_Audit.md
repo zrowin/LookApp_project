@@ -1,5 +1,20 @@
 # WF_Competitor_Audit
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [WF_Files_Structure.md](WF_Files_Structure.md)
+	- [WF_Idea_Generation.md](WF_Idea_Generation.md)
+	- [WF_ICP_Persona.md](WF_ICP_Persona.md)
+	- [WF_ICE_Ranking.md](WF_ICE_Ranking.md)
+	- [WF_GTM_Strategy.md](WF_GTM_Strategy.md)
+	- [WF_Kill_The_Idea.md](WF_Kill_The_Idea.md)
+	- [WF_Job_To_Be_Done.md](WF_Job_To_Be_Done.md)
+	- [WF_Monetization_Strategy.md](WF_Monetization_Strategy.md)
+	- [WF_MVP_Scoping.md](WF_MVP_Scoping.md)
+	- [WF_Resource_Analysis.md](WF_Resource_Analysis.md)
+	- [WF_Tech_Stack_Audit.md](WF_Tech_Stack_Audit.md)
+
 **Cel:** Szybka, praktyczna analiza konkurencji skonstruowana pod Solo-Developera. Zidentyfikuj słabe punkty rywali, potwierdź hipotezy rynkowe i wyodrębnij automatyzowalne szanse do szybkiego MVP.
 
 **Jak używać:** Wypełnij sekcje dla 3–7 największych konkurentów w Twojej niszy. Skup się na obserwowalnych faktach (ceny, onboarding, integracje, support) zamiast opinii.

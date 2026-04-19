@@ -1,6 +1,21 @@
 
 # Monetization Strategy — LookApp
 
+## Nawigacja
+- Pełna mapa: [Mapa dokumentów — NAVIGATION.md](../NAVIGATION.md)
+- Inne w tym folderze:
+	- [Competitor_audit_LookApp.md](Competitor_audit_LookApp.md)
+	- [Files_Structure.md](Files_Structure.md)
+	- [GTM_Strategy.md](GTM_Strategy.md)
+	- [ICP_Persona_LookApp.md](ICP_Persona_LookApp.md)
+	- [Job_To_Be_Done_LookApp.md](Job_To_Be_Done_LookApp.md)
+	- [Kill_the_idea-lookapp.md](Kill_the_idea-lookapp.md)
+	- [MVP_Scoping.md](MVP_Scoping.md)
+	- [opis-projektu-lookapp.md](opis-projektu-lookapp.md)
+	- [Resource_Analysis.md](Resource_Analysis.md)
+	- [Tech_Stack_Audit_LookApp.md](Tech_Stack_Audit_LookApp.md)
+	- [User_Journey_Map.md](User_Journey_Map.md)
+
 ## 💰 Cel
 - Szybko przetestować model subskrypcyjny dla użytkowników indywidualnych (mobile-first), z dodatkowymi revenue streams: affiliate (zakupy) i upsell do nielimitowanej garderoby + AI-stylista.
 
