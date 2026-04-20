@@ -15,7 +15,26 @@
     - [10_privacy_and_data_retention.md](10_privacy_and_data_retention.md)
     - [11_analytics_and_metrics.md](11_analytics_and_metrics.md)
 
-**Status:** 🔴 Nie rozpoczęty
+**Status:** 🟡 W trakcie
+
+## Postęp wdrożenia
+
+- **Faza 0: Identyfikacja planu**: [x] Przeczytano plan i sprawdzono status (wykonane)
+- **Grupa 1 — Przygotowanie środowiska**:
+    - [x] Utworzyć `src/lib/supabase/server.ts` z service role (szkic)
+    - [x] Utworzyć pomocniczy skrypt do utworzenia bucket `clothing-images` (`scripts/setup_supabase_storage.js`)
+    - [x] Dodać przykładowe RLS SQL i instrukcje (`docs/supabase/images_table_and_rls.sql`)
+    - [x] Sprawdzić i utworzyć katalog `src/components/features/upload`
+- **Grupa 2 — Frontend UI**:
+    - [ ] Szkic komponentu upload (drag & drop, preview)
+    - [ ] Walidacja typów i maks. rozmiaru
+    - [x] Szkic komponentu upload (drag & drop, preview)
+    - [x] Walidacja typów i maks. rozmiaru
+- **Grupa 3 — Backend/API**:
+    - [x] Endpoint `POST /api/upload` (szkic) — przyjmuje JSON z `fileBase64`, zapisuje do `clothing-images`
+    - [x] Zapis plików do storage i generowanie miniatur (szkic implementacji)
+
+**Następny krok (wymaga potwierdzenia):** Rozpocząć *Grupa 1* — przygotowanie środowiska?
 
 ## Cel
 Umożliwić użytkownikowi dodanie zdjęcia ubrania i automatyczne usunięcie tła, przygotowując obraz do tagowania i użycia w builderze outfitów.
@@ -45,11 +64,11 @@ src/
 
 ### Konfiguracja Supabase Backend
 
-- [ ] Utwórz `src/lib/supabase/server.ts` z service role key
-- [ ] Utwórz `src/lib/supabase/admin.ts` dla operacji administracyjnych
-- [ ] Skonfiguruj RLS policies dla tabeli `images`
-- [ ] Utwórz bucket `clothing-images` w Supabase Storage
-- [ ] Skonfiguruj storage policies (upload, read, delete)
+ - [x] Utwórz `src/lib/supabase/server.ts` z service role key
+ - [x] Utwórz `src/lib/supabase/admin.ts` dla operacji administracyjnych
+ - [x] Skonfiguruj RLS policies dla tabeli `images` — dodałem przykładowy SQL w `docs/supabase/images_table_and_rls.sql`
+ - [x] Utwórz bucket `clothing-images` w Supabase Storage — dodałem `scripts/setup_supabase_storage.js` do uruchomienia lokalnie
+ - [x] Skonfiguruj storage policies (upload, read, delete) — helper w `src/lib/supabase/admin.ts` exposes `setBucketPublic` (best-effort)
 
 ## Kryteria akceptacji
 - Użytkownik może przesłać zdjęcie z urządzenia mobilnego/desktop.

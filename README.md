@@ -101,6 +101,58 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `npm run format` | Format code with Prettier |
 | `npm run type-check` | Run TypeScript type checking |
 
+## Supabase storage setup
+
+To create the `clothing-images` bucket and apply example RLS, you can run the helper script locally or trigger the GitHub Action.
+
+Locally:
+
+```bash
+# set environment variables (PowerShell / Windows example)
+set SUPABASE_URL=your-supabase-url
+set SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+node scripts/setup_supabase_storage.js
+```
+
+Via GitHub Actions (recommended for CI):
+
+1. Add repository secrets: `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+2. Go to the Actions tab → `Setup Supabase Storage` workflow → Run workflow → `Run workflow`.
+
+To create the `images` table and sample RLS policies, open `docs/supabase/images_table_and_rls.sql` and paste into Supabase SQL editor (or run via psql with proper DB connection).
+
+## Local upload test
+
+A quick local integration test is provided to validate the upload + thumbnail flow without real Supabase credentials. It uses a mocked Supabase client and sharp to generate a thumbnail.
+
+Requirements:
+- Node 20+
+- Dependencies installed (`npm install`)
+
+Run the test:
+
+```powershell
+npm run test:upload
+```
+
+Notes:
+- The `test:upload` script runs `scripts/run-upload-test.js` with `ts-node` and `tsconfig-paths` so TypeScript modules and path aliases resolve correctly.
+- The script uses `--no-warnings` to suppress environment warnings during the test; this does not change project configuration.
+- If you prefer a Jest-based test harness, I can add `jest`/`ts-jest` tests instead.
+
+### Reviewing test output
+
+- The quick test prints its output to the terminal (console). Look for the `Test result:` object and the final `UPLOAD TEST: OK` or error lines.
+- Location of test files and scripts:
+	- `scripts/run-upload-test.js` — runner used by `npm run test:upload`
+	- `src/app/api/upload/route.ts` — `handleUpload()` implementation exercised by the test
+	- `src/lib/images/thumbnail.ts` — thumbnail generator used in the flow
+- If the test fails, copy the terminal error trace and open the related file above — the stack trace typically points to the failing module and line number.
+- For CI runs (GitHub Actions), check the Actions run logs in the repository UI (Actions → workflow run → Logs) for step output and artifacts.
+
+
+
+
 ## Project Structure
 
 ```

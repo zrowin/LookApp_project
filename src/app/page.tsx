@@ -17,7 +17,7 @@ export default function HomePage() {
             href="/login"
             className="rounded-lg bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
           >
-            Log in
+            Zaloguj się
           </Link>
           <Link
             href="/register"
