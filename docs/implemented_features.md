@@ -27,6 +27,23 @@ Lista wszystkich zaimplementowanych funkcjonalności projektu LookApp.
 
 ---
 
+## [01] Dodawanie zdjęć ubrań (Upload + BG Removal)
+
+- **Data wdrożenia:** 2026-04-20
+- **Plan:** [01 - Upload and Background Removal](docs/plans/01_upload_and_bg_removal.md)
+- **Opis:** Zaimplementowano podstawowy mechanizm uploadu obrazów z klienta, serwerowy endpoint przyjmujący pliki (base64), zapis do Supabase Storage oraz generowanie miniaturek (WebP). Dodano także szkic komponentu UI z drag&drop, podglądem i walidacją rozmiaru/typu oraz test integracyjny (mock Supabase).
+- **Główne komponenty:**
+  - `src/components/features/upload/Upload.tsx` — komponent uploadu (drag&drop, preview, walidacja)
+  - `src/components/features/upload/index.tsx` — export komponentu
+  - `src/lib/supabase/server.ts` — server-side Supabase client (service role scaffold)
+  - `src/lib/supabase/admin.ts` — admin helpers (scaffold)
+  - `src/app/api/upload/route.ts` — API route `POST /api/upload` i `handleUpload()` (zapis do storage, generowanie miniaturek)
+  - `src/lib/images/thumbnail.ts` — helper generujący miniaturki (sharp → webp)
+  - `tests/upload.integration.test.js` — integracyjny test uploadu (mock Supabase)
+  - `package.json` — dodane zależności `sharp` i `ts-node` dla testów i obróbki obrazów
+- **Status:** 🟡 W trakcie
+
+
 ## Lista zadań do wdrożenia (checkboxy)
 
 Poniższa lista zadań powstała na podstawie [docs/implemented_plans.md](docs/implemented_plans.md). Każdy punkt można oznaczyć jako wykonany poprzez zaznaczenie checkboxa.
