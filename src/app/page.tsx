@@ -9,8 +9,9 @@ export default function HomePage() {
           <h1 className="mb-6 text-6xl sm:text-7xl font-extrabold leading-tight">LookApp</h1>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-center mt-4">
+            {/* TODO: replace with auth flow when implemented */}
             <Link
-              href="/login"
+              href="/wardrobe"
               className="w-48 text-center rounded-md bg-black px-6 py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
             >
               Zaloguj się
