@@ -16,7 +16,10 @@ function NavButton({ href, label, children }: { href: string; label: string; chi
         active ? 'bg-gray-100 text-black shadow-sm' : 'text-gray-600'
       }`}
     >
-      <div className={`h-8 w-8 flex items-center justify-center ${active ? 'text-black' : 'text-gray-600'}`}>
+      <div
+        className={`h-8 w-8 flex items-center justify-center ${active ? 'text-black' : 'text-gray-600'}`}
+        style={{ color: '#252425' }}
+      >
         {children}
       </div>
       <span className="text-xs">{label}</span>

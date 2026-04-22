@@ -5,35 +5,50 @@ import { useRouter } from 'next/navigation'
 import ShelfCard from '@/components/features/wardrobe/ShelfCard'
 import EmptyState from '@/components/features/wardrobe/EmptyState'
 import AddShelfButton from '@/components/features/wardrobe/AddShelfButton'
-
-type Shelf = {
-  id: string
-  name: string
-  thumbnails: string[]
-}
+import { getShelves, saveShelves, addShelf as addShelfUtil, updateShelfName, deleteShelf as deleteShelfUtil } from '@/lib/shelves'
 
 export default function WardrobePage() {
   const router = useRouter()
-  const [shelves, setShelves] = React.useState<Shelf[]>(() => [
-    { id: '1', name: 'Koszulki', thumbnails: [] },
-    { id: '2', name: 'Spodnie', thumbnails: [] },
-    { id: '3', name: 'Buty', thumbnails: [] },
-  ])
+  const [shelves, setShelves] = React.useState(() => {
+    // initial empty until loaded on client
+    return [] as any
+  })
+
+  React.useEffect(() => {
+    const saved = getShelves()
+    if (saved && saved.length > 0) {
+      setShelves(saved)
+    } else {
+      // seed defaults
+      const defaults = [
+        { id: '1', name: 'Koszulki', thumbnails: [] },
+        { id: '2', name: 'Spodnie', thumbnails: [] },
+        { id: '3', name: 'Buty', thumbnails: [] },
+      ]
+      setShelves(defaults)
+      saveShelves(defaults)
+    }
+  }, [])
 
   function addShelf(name?: string) {
-    const title = name ?? window.prompt('Nazwa półki') ?? 'Nowa półka'
-    setShelves((s) => [...s, { id: String(Date.now()), name: title, thumbnails: [] }])
+    const title = name ?? (typeof window !== 'undefined' ? window.prompt('Nazwa półki') ?? 'Nowa półka' : 'Nowa półka')
+    const s = addShelfUtil(title)
+    setShelves((prev: any) => [...prev, s])
   }
 
   function renameShelf(id: string) {
-    const current = shelves.find((s) => s.id === id)
-    const newName = window.prompt('Nowa nazwa', current?.name ?? '')
-    if (newName) setShelves((s) => s.map((x) => (x.id === id ? { ...x, name: newName } : x)))
+    const current = shelves.find((s: any) => s.id === id)
+    const newName = typeof window !== 'undefined' ? window.prompt('Nowa nazwa', current?.name ?? '') : ''
+    if (newName) {
+      updateShelfName(id, newName)
+      setShelves((s: any) => s.map((x: any) => (x.id === id ? { ...x, name: newName } : x)))
+    }
   }
 
   function deleteShelf(id: string) {
     if (!window.confirm('Usunąć półkę?')) return
-    setShelves((s) => s.filter((x) => x.id !== id))
+    deleteShelfUtil(id)
+    setShelves((s: any) => s.filter((x: any) => x.id !== id))
   }
 
   function openShelf(id: string) {
@@ -54,7 +69,7 @@ export default function WardrobePage() {
         <EmptyState onAdd={() => addShelf()} />
       ) : (
         <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-          {shelves.map((s) => (
+          {shelves.map((s: any) => (
             <div key={s.id} className="p-1">
               <ShelfCard
                 id={s.id}

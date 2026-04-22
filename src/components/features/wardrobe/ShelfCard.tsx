@@ -3,7 +3,7 @@ import React from 'react'
 type Props = {
   id: string
   name: string
-  thumbnails?: string[]
+  thumbnails?: any[]
   onRename: (id: string) => void
   onDelete: (id: string) => void
   onOpen: (id: string) => void
@@ -11,7 +11,7 @@ type Props = {
 
 export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelete, onOpen }: Props) {
   return (
-    <div className="rounded-lg bg-gray-900 p-4 text-white shadow-sm hover:shadow-md transition-shadow">
+    <div className="rounded-lg p-4 text-white shadow-sm hover:shadow-md transition-shadow" style={{ backgroundColor: '#252425' }}>
       <div className="flex items-start justify-between mb-3">
         <h3 className="text-lg font-semibold">{name}</h3>
         <div className="flex items-center gap-3">
@@ -22,14 +22,25 @@ export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelet
 
       <div className="grid grid-cols-3 gap-3 mb-3 cursor-pointer" onClick={() => onOpen(id)}>
         {thumbnails.length > 0 ? (
-          thumbnails.map((t, i) => (
-            <div key={i} className="h-24 w-full overflow-hidden rounded bg-gray-800">
-              <img src={t} alt={`${name}-${i}`} className="h-full w-full object-cover" />
-            </div>
-          ))
+          thumbnails.map((t, i) => {
+            const url = typeof t === 'string' ? t : t.url
+            return (
+              <div
+                key={i}
+                className="h-24 w-full overflow-hidden rounded"
+                style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
+              >
+                <img src={url} alt={`${name}-${i}`} className="h-full w-full object-cover" />
+              </div>
+            )
+          })
         ) : (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-24 w-full overflow-hidden rounded bg-gray-800" />
+            <div
+              key={i}
+              className="h-24 w-full overflow-hidden rounded"
+              style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
+            />
           ))
         )}
       </div>
