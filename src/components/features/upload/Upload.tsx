@@ -90,10 +90,10 @@ export function Upload() {
   return (
     <div className="space-y-6 text-white">
       <div
-        className="border-dashed border-2 border-white/10 p-8 rounded-lg text-center"
+        className="border-dashed border-2 border-white/10 p-6 md:p-8 rounded-lg text-center flex flex-col justify-center"
         onDrop={onDrop}
         onDragOver={onDragOver}
-        style={{ backgroundColor: '#252425' }}
+        style={{ backgroundColor: '#252425', minHeight: '40vh' }}
       >
         <div className="mb-4 flex items-center justify-center">
           <svg className="h-10 w-10 text-white/90" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

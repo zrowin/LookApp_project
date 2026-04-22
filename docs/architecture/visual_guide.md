@@ -21,6 +21,7 @@ Styl:
 - Styl:
   - tło: białe (#FFFFFF)
   - typografia: czarna (#000000)
+  - dodatkowe elementy (hex #252425)
 
 **Zachowanie:**
 - Po poprawnym logowaniu → przekierowanie do ekranu „Szafa”

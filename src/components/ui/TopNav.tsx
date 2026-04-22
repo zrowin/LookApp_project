@@ -50,7 +50,7 @@ export default function TopNav() {
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </NavButton>
 
-          <NavButton href="/outfit-builder" label="Przymierzalnia">
+          <NavButton href="/try-on" label="Przymierzalnia">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
           </NavButton>
 
