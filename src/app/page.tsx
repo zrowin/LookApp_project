@@ -2,63 +2,56 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <div className="max-w-4xl text-center">
-        <h1 className="mb-6 text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-          LookApp
-        </h1>
-        <p className="mb-8 text-xl text-gray-600 dark:text-gray-400">
-          Your personal virtual wardrobe manager. Upload clothing photos,
-          organize your closet, create outfits, and get style recommendations.
-        </p>
+    <main className="min-h-screen flex flex-col justify-between items-center bg-white text-black p-6">
+      <div className="flex-1 flex items-center justify-center w-full">
+        <div className="w-full max-w-2xl text-center px-4">
+          <div className="mb-2 text-sm text-gray-700">Welcome to</div>
+          <h1 className="mb-6 text-6xl sm:text-7xl font-extrabold leading-tight">LookApp</h1>
 
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href="/login"
-            className="rounded-lg bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
-          >
-            Zaloguj się
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-lg bg-gray-100 px-6 py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
-          >
-            Create account
-          </Link>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-center mt-4">
+            <Link
+              href="/login"
+              className="w-48 text-center rounded-md bg-black px-6 py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
+            >
+              Zaloguj się
+            </Link>
+
+            <Link
+              href="/register"
+              className="w-48 text-center rounded-md border border-black bg-transparent px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-gray-100"
+            >
+              Utwórz konto
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
-        <FeatureCard
-          title="Upload Clothing"
-          description="Take photos of your clothes and automatically remove the background"
-        />
-        <FeatureCard
-          title="Organize Wardrobe"
-          description="Categorize and tag your items for easy browsing and searching"
-        />
-        <FeatureCard
-          title="Create Outfits"
-          description="Build outfits from your virtual closet and save your favorite looks"
-        />
-      </div>
-    </main>
-  )
-}
+      <section className="w-full">
+        <div className="mx-auto max-w-5xl px-4 pb-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-lg border border-gray-300 p-6">
+              <p className="text-base text-black">
+                Organizuj swoją szafę: twórz sekcje i przechowuj ubrania w porządku,
+                aby łatwo je przeglądać i zarządzać kolekcją.
+              </p>
+            </div>
 
-function FeatureCard({
-  title,
-  description,
-}: {
-  title: string
-  description: string
-}) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
-        {title}
-      </h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
-    </div>
+            <div className="rounded-lg border border-gray-300 p-6">
+              <p className="text-base text-black">
+                Twórz stylizacje metodą drag & drop: przeciągaj elementy na canvas,
+                układaj i eksperymentuj z wyglądem outfitów.
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-gray-300 p-6">
+              <p className="text-base text-black">
+                Zapisuj ulubione outfity: zachowuj swoje najlepsze zestawy i szybki
+                dostęp do nich później.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }
