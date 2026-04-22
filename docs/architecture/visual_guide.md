@@ -52,7 +52,7 @@ Widoczna na wszystkich głównych ekranach.
 ## 4. Ekran: Szafa (główny ekran po logowaniu)
 
 ### Cel:
-Zarządzanie kolekcją ubrań w formie „półek” (folderów)
+Zarządzanie kolekcją ubrań w formie „półek” (folderów).
 
 ---
 
