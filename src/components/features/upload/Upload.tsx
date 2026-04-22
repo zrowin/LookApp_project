@@ -17,6 +17,13 @@ export function Upload() {
   const [selectedType, setSelectedType] = React.useState<string>('')
   const [color, setColor] = React.useState<string>('')
   const [styles, setStyles] = React.useState<string[]>([])
+  const [availableStyles, setAvailableStyles] = React.useState<string[]>([
+    'Casual',
+    'Formal',
+    'Sport',
+    'Street',
+    'Vintage',
+  ])
   const [description, setDescription] = React.useState<string>('')
   const [shelves, setShelves] = React.useState<{ id: string; name: string }[]>([])
 
@@ -170,7 +177,7 @@ export function Upload() {
               <div>
                 <label className="block text-sm font-medium mb-1">Styl (możesz wybrać kilka)</label>
                 <div className="flex flex-wrap gap-2">
-                  {['Casual', 'Formal', 'Sport', 'Street', 'Vintage'].map((s) => (
+                  {availableStyles.map((s) => (
                     <button
                       type="button"
                       key={s}
@@ -182,6 +189,23 @@ export function Upload() {
                       {s}
                     </button>
                   ))}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const name = window.prompt('Podaj nazwę stylu')
+                      if (!name) return
+                      const trimmed = name.trim()
+                      if (!trimmed) return
+                      if (!availableStyles.includes(trimmed)) {
+                        setAvailableStyles((prev) => [...prev, trimmed])
+                      }
+                      setStyles((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]))
+                    }}
+                    className="px-3 py-1 rounded-full text-sm bg-transparent border border-dashed border-white/20 text-white"
+                  >
+                    + Dodaj styl
+                  </button>
                 </div>
               </div>
 

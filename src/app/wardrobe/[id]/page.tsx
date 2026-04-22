@@ -54,14 +54,14 @@ export default function ShelfDetailPage() {
                   <img src={t.url} alt={`item-${i}`} className="w-full h-full object-cover" />
                 </div>
 
-                <div className="absolute inset-0 flex flex-col justify-end p-3 bg-black/0 group-hover:bg-black/50 transition">
-                  <div className="mb-2 text-xs text-white/90">
+                <div className="absolute inset-0 flex flex-col justify-end p-3 bg-black/0 transition-opacity opacity-0 group-hover:opacity-100 group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">
+                  <div className="mb-2 text-xs text-white/95">
                     {t.color && <span className="mr-2">Kolor: {t.color}</span>}
                     {t.styles && t.styles.length > 0 && (
                       <span>Styl: {t.styles.join(', ')}</span>
                     )}
                   </div>
-                  {t.description && <div className="text-sm text-white/90 mb-2">{t.description}</div>}
+                  {t.description && <div className="text-sm text-white/95 mb-2">{t.description}</div>}
                 </div>
 
                 <button
