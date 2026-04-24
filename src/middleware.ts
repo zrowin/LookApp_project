@@ -4,7 +4,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 /**
  * Protected routes that require authentication
  */
-const protectedRoutes = ['/wardrobe', '/outfit-builder', '/outfits', '/settings']
+// TODO: enable auth protection for `/wardrobe` when auth is implemented
+const protectedRoutes = ['/outfit-builder', '/outfits', '/settings']
 
 /**
  * Auth routes that should redirect if already logged in

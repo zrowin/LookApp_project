@@ -5,9 +5,14 @@ import { Upload } from '@/components/features/upload'
 
 export default function DashboardUploadPage() {
   return (
-    <div className="mx-auto max-w-4xl p-8">
-      <h2 className="mb-6 text-2xl font-semibold">Panel uploadu zdjęć</h2>
-      <Upload />
-    </div>
+    <main className="min-h-screen bg-black text-white p-6">
+      <header className="mb-6 flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">Dodaj ubranie</h2>
+      </header>
+
+      <div className="w-full max-w-4xl mx-auto">
+        <Upload />
+      </div>
+    </main>
   )
 }
