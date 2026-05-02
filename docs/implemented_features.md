@@ -49,23 +49,23 @@ Lista wszystkich zaimplementowanych funkcjonalności projektu LookApp.
 Poniższa lista zadań powstała na podstawie [docs/implemented_plans.md](docs/implemented_plans.md). Każdy punkt można oznaczyć jako wykonany poprzez zaznaczenie checkboxa.
 
 ### 01 - Dodawanie zdjęć ubrań
-- [ ] Stworzyć UI uploadu w src/components/features/upload (drag & drop, podgląd, pasek postępu)
-- [ ] Backend: endpoint do przyjmowania plików i zapis w storage; zapis metadanych (owner, nazwa pliku, wymiary, rozmiar, hash, timestamp)
-- [ ] Implementować generowanie miniatur i wersji webp; ustawić limit rozmiaru i walidację typów
+- [x] Stworzyć UI uploadu w src/components/features/upload (drag & drop, podgląd, pasek postępu)
+- [x] Backend: endpoint do przyjmowania plików i zapis w storage; zapis metadanych (owner, nazwa pliku, wymiary, rozmiar, hash, timestamp)
+- [x] Implementować generowanie miniatur i wersji webp; ustawić limit rozmiaru i walidację typów
 - [ ] Przygotować schemat DB/Dexie.js dla `clothing_items` i mechanizm opcjonalnej synchronizacji z backendem
 - [ ] (Opcjonalne) Integracja z serwisem do usuwania tła (background removal)
-- [ ] Napisać testy akceptacyjne: upload działa, plik w storage, poprawne metadane
+- [x] Napisać testy akceptacyjne: upload działa, plik w storage, poprawne metadane
 
 ### 02 - Kategoryzacja ubrań (tagowanie)
-- [ ] Zaprojektować model danych: `categories`, `tags` oraz relacje wiele-do-wielu z `clothing_items`
-- [ ] Dodać UI do edycji metadanych i przypisywania tagów (widok pojedynczy + bulk edit)
+- [x] Zaprojektować model danych: `categories`, `tags` oraz relacje wiele-do-wiele z `clothing_items` (typy TS zdefiniowane)
+- [x] Dodać UI do edycji metadanych i przypisywania tagów (widok pojedynczy + bulk edit) (podstawowe pola w komponencie upload)
 - [ ] Implementować endpoint/autotagger zwracający proponowane tagi (integracja z ML lub zewnętrznym serwisem)
 - [ ] Rozszerzyć wyszukiwanie i filtry o kategorię, tagi, kolor i materiał
 - [ ] Przygotować migracje DB / aktualizację schematu Dexie.js
 - [ ] Napisać testy akceptacyjne: ręczne tagowanie i autotagging, filtry działają poprawnie
 
 ### 03 - Dobieranie zdjęć — tworzenie stroju (Outfit Builder)
-- [ ] Zaprojektować model danych: tabela `outfits` z listą `clothing_item_ids` i metadanymi (nazwa, opis, cover image, owner, timestamp)
+- [x] Zaprojektować model danych: tabela `outfits` z listą `clothing_item_ids` i metadanymi (nazwa, opis, cover image, owner, timestamp) (typ `Outfit` w `src/types`)
 - [ ] Zaimplementować UI buildera w `src/components/features/outfits` (canvas/siatka, drag&drop, pozycjonowanie)
 - [ ] Wstępny silnik dopasowań: reguły heurystyczne (np. nie łączyć dwóch spodni)
 - [ ] Rozszerzyć opcjonalnie o rekomendacje ML (kolor harmony, styl, okazja)
