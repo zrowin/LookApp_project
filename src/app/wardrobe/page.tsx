@@ -58,7 +58,7 @@ export default function WardrobePage() {
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-6 flex items-start justify-between">
         <h1 className="text-2xl font-semibold">Twoja szafa</h1>
         <div>
           <AddShelfButton onAdd={() => addShelf()} />

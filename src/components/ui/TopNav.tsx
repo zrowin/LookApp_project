@@ -34,7 +34,7 @@ export default function TopNav() {
   if (pathname === '/') return null
 
   return (
-    <nav className="w-full bg-white border-b border-gray-200 text-black">
+    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 text-black">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-4">
           <div className="text-3xl sm:text-4xl font-extrabold">LookApp</div>
