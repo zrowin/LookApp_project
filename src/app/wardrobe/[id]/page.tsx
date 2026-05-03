@@ -45,7 +45,7 @@ export default function ShelfDetailPage() {
         </div>
 
         {shelf.thumbnails.length === 0 ? (
-          <div className="mt-8 text-center text-gray-400">Brak zdjęć w tej półce.</div>
+          <div className="mt-8 text-center text-gray-400">Brak ubrań na półce.</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
             {shelf.thumbnails.map((t: any, i: number) => (

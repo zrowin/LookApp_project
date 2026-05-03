@@ -4,6 +4,21 @@ import { getShelves, addShelf as addShelfUtil, addItemToShelf } from '@/lib/shel
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
+const COLOR_OPTIONS = [
+  { label: 'Czarny', value: 'czarny', swatch: '#000000' },
+  { label: 'Biały', value: 'biały', swatch: '#ffffff' },
+  { label: 'Szary', value: 'szary', swatch: '#8a8a8a' },
+  { label: 'Beżowy', value: 'beżowy', swatch: '#d8c3a5' },
+  { label: 'Żółty', value: 'żółty', swatch: '#facc15' },
+  { label: 'Pomarańczowy', value: 'pomarańczowy', swatch: '#f97316' },
+  { label: 'Czerwony', value: 'czerwony', swatch: '#ef4444' },
+  { label: 'Różowy', value: 'różowy', swatch: '#ec4899' },
+  { label: 'Fioletowy', value: 'fioletowy', swatch: '#8b5cf6' },
+  { label: 'Niebieski', value: 'niebieski', swatch: '#3b82f6' },
+  { label: 'Zielony', value: 'zielony', swatch: '#22c55e' },
+  { label: 'Wielobarwny', value: 'wielobarwny', swatch: 'conic-gradient(#ef4444, #facc15, #22c55e, #3b82f6, #8b5cf6, #ef4444)' },
+]
+
 type FileMeta = {
   id: string
   file: File
@@ -14,8 +29,10 @@ type FileMeta = {
 export function Upload() {
   const inputRef = React.useRef<HTMLInputElement | null>(null)
   const [items, setItems] = React.useState<FileMeta[]>([])
+  const [activeItemId, setActiveItemId] = React.useState<string | null>(null)
   const [selectedType, setSelectedType] = React.useState<string>('')
   const [color, setColor] = React.useState<string>('')
+  const [isColorDropdownOpen, setIsColorDropdownOpen] = React.useState(false)
   const [styles, setStyles] = React.useState<string[]>([])
   const [availableStyles, setAvailableStyles] = React.useState<string[]>([
     'Casual',
@@ -28,6 +45,9 @@ export function Upload() {
   const [shelves, setShelves] = React.useState<{ id: string; name: string }[]>([])
 
   const itemsRef = React.useRef<FileMeta[]>([])
+  const activeItem = items.find((item) => item.id === activeItemId) ?? items[0]
+  const queuedItems = items.filter((item) => item.id !== activeItem?.id)
+  const selectedColor = COLOR_OPTIONS.find((option) => option.value === color)
 
   // keep ref in sync with items
   React.useEffect(() => {
@@ -44,6 +64,17 @@ export function Upload() {
   React.useEffect(() => {
     setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
   }, [])
+
+  React.useEffect(() => {
+    if (items.length === 0) {
+      setActiveItemId(null)
+      return
+    }
+
+    if (!activeItemId || !items.some((item) => item.id === activeItemId)) {
+      setActiveItemId(items[0].id)
+    }
+  }, [activeItemId, items])
 
   function validateFile(file: File): string | undefined {
     if (!file.type.startsWith('image/')) return 'Nieobsługiwany typ pliku'
@@ -87,10 +118,43 @@ export function Upload() {
     })
   }
 
+  function clearCurrentMetadata() {
+    setColor('')
+    setStyles([])
+    setDescription('')
+    setIsColorDropdownOpen(false)
+  }
+
+  function saveActiveItem() {
+    if (!selectedType || !activeItem || activeItem.error) return
+
+    addItemToShelf(selectedType, activeItem.previewUrl, {
+      color: color || undefined,
+      styles: styles.length ? styles : undefined,
+      description: description || undefined,
+    })
+
+    setItems((prev) => {
+      const activeIndex = prev.findIndex((item) => item.id === activeItem.id)
+      const nextItems = prev.filter((item) => item.id !== activeItem.id)
+      const nextActive = nextItems[activeIndex] ?? nextItems[activeIndex - 1] ?? nextItems[0] ?? null
+      setActiveItemId(nextActive?.id ?? null)
+      return nextItems
+    })
+    clearCurrentMetadata()
+    setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
+  }
+
+  function clearPendingItems() {
+    items.forEach((item) => URL.revokeObjectURL(item.previewUrl))
+    setItems([])
+    clearCurrentMetadata()
+  }
+
   return (
     <div className="space-y-6 text-white">
       <div
-        className="border-dashed border-2 border-white/10 p-6 md:p-8 rounded-lg text-center flex flex-col justify-center"
+        className="rounded-md border border-white/6 p-6 text-center flex flex-col justify-center md:p-8"
         onDrop={onDrop}
         onDragOver={onDragOver}
         style={{ backgroundColor: '#252425', minHeight: '40vh' }}
@@ -124,13 +188,42 @@ export function Upload() {
           <h4 className="font-semibold text-lg">Podgląd i kategoryzacja</h4>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <div className="grid grid-cols-3 gap-3">
-                {items.map((it) => (
-                  <div key={it.id} className="rounded overflow-hidden bg-[#3a3a3a] border border-white/5">
-                    <img src={it.previewUrl} alt={it.file.name} className="w-full h-32 object-cover" />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              {activeItem && (
+                <div className="min-w-0 flex-1">
+                  <div className="overflow-hidden rounded-lg border border-white/5 bg-[#3a3a3a]">
+                    <img src={activeItem.previewUrl} alt={activeItem.file.name} className="h-80 w-full object-cover" />
                   </div>
-                ))}
+                  <div className="mt-2 flex items-center justify-between gap-3 text-sm text-white/60">
+                    <span>
+                      {items.findIndex((item) => item.id === activeItem.id) + 1} z {items.length}
+                    </span>
+                    <span className="truncate">{activeItem.file.name}</span>
+                  </div>
+                  {activeItem.error && <div className="mt-2 text-sm text-red-400">{activeItem.error}</div>}
+                </div>
+              )}
+
+              {queuedItems.length > 0 && (
+                <div className="flex gap-2 overflow-auto sm:w-28 sm:flex-col">
+                  {queuedItems.map((it) => (
+                    <button
+                      type="button"
+                      key={it.id}
+                      onClick={() => setActiveItemId(it.id)}
+                      className="h-20 w-20 shrink-0 overflow-hidden rounded border border-white/10 bg-[#3a3a3a] sm:h-24 sm:w-full"
+                      aria-label={`Edytuj ${it.file.name}`}
+                    >
+                      <img src={it.previewUrl} alt={it.file.name} className="h-full w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="sm:hidden">
+                <Button type="button" onClick={() => inputRef.current?.click()} variant="ghost">
+                  Dodaj kolejne zdjęcia
+                </Button>
               </div>
             </div>
 
@@ -166,12 +259,63 @@ export function Upload() {
 
               <div>
                 <label className="block text-sm font-medium mb-1">Kolor</label>
-                <input
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  placeholder="np. czarny, biały, czerwony"
-                  className="w-full rounded border bg-black/40 px-3 py-2 text-white"
-                />
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsColorDropdownOpen((open) => !open)}
+                    className="flex w-full items-center justify-between rounded border border-white/20 bg-black/40 px-3 py-2 text-left text-white"
+                    aria-haspopup="listbox"
+                    aria-expanded={isColorDropdownOpen}
+                  >
+                    <span className="flex items-center gap-2">
+                      {selectedColor ? (
+                        <>
+                          <span
+                            className="h-4 w-4 rounded-full border border-white/30"
+                            style={{ background: selectedColor.swatch }}
+                            aria-hidden="true"
+                          />
+                          {selectedColor.label}
+                        </>
+                      ) : (
+                        <span className="text-white/50">Wybierz kolor</span>
+                      )}
+                    </span>
+                    <span className="text-white/60" aria-hidden="true">
+                      ▾
+                    </span>
+                  </button>
+
+                  {isColorDropdownOpen && (
+                    <div
+                      className="absolute z-20 mt-2 max-h-64 w-full overflow-auto rounded border border-white/10 bg-[#252425] py-1 shadow-lg"
+                      role="listbox"
+                    >
+                      {COLOR_OPTIONS.map((option) => (
+                        <button
+                          type="button"
+                          key={option.value}
+                          onClick={() => {
+                            setColor(option.value)
+                            setIsColorDropdownOpen(false)
+                          }}
+                          className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white hover:bg-white/10 ${
+                            color === option.value ? 'bg-white/10' : ''
+                          }`}
+                          role="option"
+                          aria-selected={color === option.value}
+                        >
+                          <span
+                            className="h-4 w-4 rounded-full border border-white/30"
+                            style={{ background: option.swatch }}
+                            aria-hidden="true"
+                          />
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -216,29 +360,18 @@ export function Upload() {
 
               <div className="flex items-center gap-3">
                 <Button
-                  onClick={() => {
-                    if (!selectedType) return
-                    // add all items to selected shelf with metadata
-                    items.forEach((it) =>
-                      addItemToShelf(selectedType, it.previewUrl, {
-                        color: color || undefined,
-                        styles: styles.length ? styles : undefined,
-                        description: description || undefined,
-                      })
-                    )
-                    // clear selected items
-                    setItems([])
-                    // refresh shelves in case other components read them
-                    setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
-                    alert('Zapisano do wybranej półki')
-                  }}
-                  disabled={!selectedType}
-                  className={`px-4 py-2 ${!selectedType ? 'opacity-50 pointer-events-none' : ''} bg-white text-black`}
+                  type="button"
+                  onClick={saveActiveItem}
+                  disabled={!selectedType || !activeItem || !!activeItem.error}
+                  className={`px-4 py-2 ${!selectedType || !activeItem || activeItem.error ? 'opacity-50 pointer-events-none' : ''} bg-white text-black`}
                 >
                   Zapisz
                 </Button>
-                <Button variant="ghost" onClick={() => setItems([])}>
+                <Button type="button" variant="ghost" onClick={clearPendingItems}>
                   Anuluj
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => inputRef.current?.click()} className="hidden sm:inline-flex">
+                  Dodaj kolejne
                 </Button>
               </div>
             </form>
