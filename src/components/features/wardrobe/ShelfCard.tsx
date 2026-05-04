@@ -11,12 +11,45 @@ type Props = {
 
 export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelete, onOpen }: Props) {
   return (
-    <div className="rounded-lg p-4 text-white shadow-sm hover:shadow-md transition-shadow" style={{ backgroundColor: '#252425' }}>
+    <div className="rounded-md border border-white/6 bg-[#252425] p-4 text-white shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between mb-3">
         <h3 className="text-lg font-semibold">{name}</h3>
-        <div className="flex items-center gap-3">
-          <button onClick={() => onRename(id)} className="text-sm text-gray-300 hover:text-white">Edytuj</button>
-          <button onClick={() => onDelete(id)} className="text-sm text-red-400 hover:text-red-600">Usuń</button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onRename(id)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Edytuj półkę"
+            type="button"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path
+                d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path d="M13.5 6 18 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onDelete(id)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+            aria-label="Usuń półkę"
+            type="button"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M5 7h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M10 11v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M14 11v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path
+                d="M7 7l1 13h8l1-13M9.5 7V4h5v3"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         </div>
       </div>
 

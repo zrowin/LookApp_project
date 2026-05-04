@@ -1,4 +1,1 @@
-// Feature: Upload
-// This directory will contain upload-related components
-
-export {}
+export { Upload } from './Upload'
