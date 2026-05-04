@@ -36,6 +36,27 @@ export default function WardrobePage() {
     setShelves((prev: any) => [...prev, s])
   }
 
+  async function syncFromServer() {
+    const DataService = (await import('@/lib/dataService')).default || (await import('@/lib/dataService')).DataService
+    try {
+      // pull images and add to 'Imported' shelf
+      const res = await DataService.syncToServer({ pull: true })
+      // reload shelves
+      const saved = getShelves()
+      setShelves(saved)
+      if (res && res.imported) {
+        alert(`Zaimportowano ${res.imported} obrazów`)
+      } else if (res && res.ok) {
+        alert('Brak nowych obrazów do zaimportowania')
+      } else {
+        alert('Błąd podczas synchronizacji')
+      }
+    } catch (e) {
+      console.error('syncFromServer error', e)
+      alert('Błąd synchronizacji')
+    }
+  }
+
   function renameShelf(id: string) {
     const current = shelves.find((s: any) => s.id === id)
     const newName = typeof window !== 'undefined' ? window.prompt('Nowa nazwa', current?.name ?? '') : ''
@@ -60,7 +81,8 @@ export default function WardrobePage() {
     <main className="min-h-screen bg-black text-white p-6">
       <header className="mb-6 flex items-start justify-between">
         <h1 className="text-2xl font-semibold">Twoja szafa</h1>
-        <div>
+        <div className="flex items-center gap-3">
+          <button onClick={syncFromServer} className="px-3 py-2 text-sm bg-white text-black rounded">Synchronizuj</button>
           <AddShelfButton onAdd={() => addShelf()} />
         </div>
       </header>

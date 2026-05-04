@@ -52,7 +52,7 @@ Poniższa lista zadań powstała na podstawie [docs/implemented_plans.md](docs/i
 - [x] Stworzyć UI uploadu w src/components/features/upload (drag & drop, podgląd, pasek postępu)
 - [x] Backend: endpoint do przyjmowania plików i zapis w storage; zapis metadanych (owner, nazwa pliku, wymiary, rozmiar, hash, timestamp)
 - [x] Implementować generowanie miniatur i wersji webp; ustawić limit rozmiaru i walidację typów
-- [ ] Przygotować schemat DB/Dexie.js dla `clothing_items` i mechanizm opcjonalnej synchronizacji z backendem
+ - [ ] Przygotować schemat DB/IndexedDB dla `clothing_items` i mechanizm opcjonalnej synchronizacji z backendem
 - [ ] (Opcjonalne) Integracja z serwisem do usuwania tła (background removal)
 - [x] Napisać testy akceptacyjne: upload działa, plik w storage, poprawne metadane
 
@@ -61,7 +61,7 @@ Poniższa lista zadań powstała na podstawie [docs/implemented_plans.md](docs/i
 - [x] Dodać UI do edycji metadanych i przypisywania tagów (widok pojedynczy + bulk edit) (podstawowe pola w komponencie upload)
 - [ ] Implementować endpoint/autotagger zwracający proponowane tagi (integracja z ML lub zewnętrznym serwisem)
 - [ ] Rozszerzyć wyszukiwanie i filtry o kategorię, tagi, kolor i materiał
-- [ ] Przygotować migracje DB / aktualizację schematu Dexie.js
+ - [ ] Przygotować migracje DB / aktualizację schematu IndexedDB
 - [ ] Napisać testy akceptacyjne: ręczne tagowanie i autotagging, filtry działają poprawnie
 
 ### 03 - Dobieranie zdjęć — tworzenie stroju (Outfit Builder)

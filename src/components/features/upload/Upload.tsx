@@ -360,6 +360,56 @@ export function Upload() {
 
               <div className="flex items-center gap-3">
                 <Button
+                  onClick={() => {
+                    if (!selectedType) return
+
+                    // upload files to server and use returned public URLs
+                    async function uploadAndSave() {
+                      for (const it of items) {
+                        try {
+                          const toBase64 = (file: File) =>
+                            new Promise<string>((resolve, reject) => {
+                              const reader = new FileReader()
+                              reader.onload = () => resolve((reader.result as string).split(',')[1])
+                              reader.onerror = reject
+                              reader.readAsDataURL(file)
+                            })
+
+                          const fileBase64 = await toBase64(it.file)
+                          const res = await fetch('/api/upload', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ filename: it.file.name, fileBase64, removeBg: false }),
+                          })
+                          const json = await res.json()
+                          const remoteUrl = json.thumbnailUrl || json.url || it.previewUrl
+
+                          addItemToShelf(selectedType, remoteUrl, {
+                            color: color || undefined,
+                            styles: styles.length ? styles : undefined,
+                            description: description || undefined,
+                          })
+                        } catch (e) {
+                          console.error('Upload failed for', it.file.name, e)
+                          // fallback to local preview
+                          addItemToShelf(selectedType, it.previewUrl, {
+                            color: color || undefined,
+                            styles: styles.length ? styles : undefined,
+                            description: description || undefined,
+                          })
+                        }
+                      }
+
+                      // clear selected items and refresh shelves
+                      setItems([])
+                      setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
+                      alert('Zapisano do wybranej półki')
+                    }
+
+                    void uploadAndSave()
+                  }}
+                  disabled={!selectedType}
+                  className={`px-4 py-2 ${!selectedType ? 'opacity-50 pointer-events-none' : ''} bg-white text-black`}
                   type="button"
                   onClick={saveActiveItem}
                   disabled={!selectedType || !activeItem || !!activeItem.error}
