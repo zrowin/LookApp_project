@@ -21,23 +21,64 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
   const path = `${ownerId}/${imageId}/${filename}`
 
   const { error: uploadError } = await supabaseServer.storage.from('clothing-images').upload(path, buffer, { upsert: false })
-
   if (uploadError) {
-    throw new Error('Upload failed')
+    console.error('Supabase upload error for', path, uploadError)
+    const err: any = new Error('Upload failed')
+    err.status = 500
+    err.detail = uploadError
+    throw err
   }
 
-  const { data: publicData } = supabaseServer.storage.from('clothing-images').getPublicUrl(path)
-  const publicUrl = publicData?.publicUrl ?? null
+  // helper to get a usable URL: prefer publicUrl, fall back to signed URL when possible
+  async function resolveStorageUrl(path: string) {
+    try {
+      const from = supabaseServer.storage.from('clothing-images')
+      // try public URL first
+      let publicUrl: string | null = null
+      try {
+        const { data: publicData } = from.getPublicUrl(path)
+        publicUrl = publicData?.publicUrl ?? null
+      } catch (e) {
+        // getPublicUrl may throw in some clients; ignore and continue
+      }
+
+      if (publicUrl) return publicUrl
+
+      // try signed URL if server client supports it
+      if (typeof from.createSignedUrl === 'function') {
+        try {
+          const { data: signedData, error: signErr } = await from.createSignedUrl(path, 60 * 60)
+          if (!signErr && signedData?.signedUrl) return signedData.signedUrl
+          if (signErr) console.warn('createSignedUrl error for', path, signErr)
+        } catch (e) {
+          console.warn('createSignedUrl threw for', path, e)
+        }
+      }
+
+      return null
+    } catch (e) {
+      console.warn('resolveStorageUrl error for', path, e)
+      return null
+    }
+  }
+
+  const publicUrl = await resolveStorageUrl(path)
 
   // Generate thumbnail (webp) and upload
   let thumbUrl: string | null = null
+  let thumbDataUrl: string | null = null
   try {
     const thumbBuffer = await createThumbnail(buffer, 400)
+    // also keep a data: URI for immediate preview if storage URL isn't available
+    try {
+      thumbDataUrl = `data:image/webp;base64,${thumbBuffer.toString('base64')}`
+    } catch (e) {
+      console.warn('Could not create thumbnail data URI', e)
+    }
     const thumbPath = `${ownerId}/${imageId}/thumbnail.webp`
     const { error: thumbErr } = await supabaseServer.storage.from('clothing-images').upload(thumbPath, thumbBuffer, { upsert: false, contentType: 'image/webp' })
     if (!thumbErr) {
-      const { data: thumbData } = supabaseServer.storage.from('clothing-images').getPublicUrl(thumbPath)
-      thumbUrl = thumbData?.publicUrl ?? null
+      thumbUrl = await resolveStorageUrl(thumbPath)
     } else {
       console.warn('Thumbnail upload error:', thumbErr)
     }
@@ -45,7 +86,7 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
     console.warn('Thumbnail generation failed:', e)
   }
 
-  // Insert metadata into `images` table if it exists; ignore errors
+  // Insert metadata into `images` table if it exists; ignore errors but log
   try {
     await supabaseServer.from('images').insert([
       {
@@ -61,7 +102,12 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
     console.warn('Could not insert metadata into images table:', e)
   }
 
-  return { id: imageId, url: publicUrl, thumbnailUrl: thumbUrl }
+  const returnedThumb = thumbUrl ?? thumbDataUrl
+
+  // Log final urls for easier local debugging
+  console.log('Upload result for', imageId, { url: publicUrl, thumbnailUrl: returnedThumb })
+
+  return { id: imageId, url: publicUrl, thumbnailUrl: returnedThumb }
 }
 
 export async function POST(req: Request) {

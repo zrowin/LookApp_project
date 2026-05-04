@@ -27,6 +27,7 @@ Poniżej krótki spis plików z folderu [docs/business-analysis](docs/business-a
 - **Language**: [TypeScript](https://www.typescriptlang.org/) (strict mode)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) with custom design tokens
 - **Database & Auth**: [Supabase](https://supabase.com/)
+- **Client-side DB**: IndexedDB (native browser API) — using plain IndexedDB, not Dexie.js
 - **Payments**: [Stripe](https://stripe.com/)
 - **State Management**: React hooks + context
 - **Code Quality**: ESLint, Prettier, TypeScript

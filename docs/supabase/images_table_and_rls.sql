@@ -27,3 +27,8 @@ CREATE POLICY "Images delete by owner" ON public.images
   FOR DELETE USING (auth.uid() = owner_id);
 
 -- Note: Adjust policies depending on desired access for public images or admin roles.
+
+-- Convenience policy: allow public SELECTs so thumbnails can be previewed on local/dev setups.
+-- IMPORTANT: Remove or tighten this policy in production if you want storage to remain private.
+CREATE POLICY "Images select public" ON public.images
+  FOR SELECT USING (true);
