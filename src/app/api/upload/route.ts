@@ -67,6 +67,7 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
   // Generate thumbnail (webp) and upload
   let thumbUrl: string | null = null
   let thumbDataUrl: string | null = null
+  let thumbPath: string | null = null
   try {
     const thumbBuffer = await createThumbnail(buffer, 400)
     // also keep a data: URI for immediate preview if storage URL isn't available
@@ -75,7 +76,7 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
     } catch (e) {
       console.warn('Could not create thumbnail data URI', e)
     }
-    const thumbPath = `${ownerId}/${imageId}/thumbnail.webp`
+    thumbPath = `${ownerId}/${imageId}/thumbnail.webp`
     const { error: thumbErr } = await supabaseServer.storage.from('clothing-images').upload(thumbPath, thumbBuffer, { upsert: false, contentType: 'image/webp' })
     if (!thumbErr) {
       thumbUrl = await resolveStorageUrl(thumbPath)
@@ -105,9 +106,9 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
   const returnedThumb = thumbUrl ?? thumbDataUrl
 
   // Log final urls for easier local debugging
-  console.log('Upload result for', imageId, { url: publicUrl, thumbnailUrl: returnedThumb })
+  console.log('Upload result for', imageId, { url: publicUrl, thumbnailUrl: returnedThumb, thumbnailPath: thumbPath })
 
-  return { id: imageId, url: publicUrl, thumbnailUrl: returnedThumb }
+  return { id: imageId, url: publicUrl, thumbnailUrl: returnedThumb, originalPath: path, thumbnailPath }
 }
 
 export async function POST(req: Request) {

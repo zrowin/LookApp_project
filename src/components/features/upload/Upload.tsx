@@ -128,21 +128,71 @@ export function Upload() {
   function saveActiveItem() {
     if (!selectedType || !activeItem || activeItem.error) return
 
-    addItemToShelf(selectedType, activeItem.previewUrl, {
-      color: color || undefined,
-      styles: styles.length ? styles : undefined,
-      description: description || undefined,
-    })
+    async function uploadAndStore() {
+      let remoteUrl = ''
 
-    setItems((prev) => {
-      const activeIndex = prev.findIndex((item) => item.id === activeItem.id)
-      const nextItems = prev.filter((item) => item.id !== activeItem.id)
-      const nextActive = nextItems[activeIndex] ?? nextItems[activeIndex - 1] ?? nextItems[0] ?? null
-      setActiveItemId(nextActive?.id ?? null)
-      return nextItems
-    })
-    clearCurrentMetadata()
-    setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
+      // try uploading to server to get a persistent storage path
+      try {
+        const toBase64 = (file: File) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = () => resolve((reader.result as string).split(',')[1])
+            reader.onerror = reject
+            reader.readAsDataURL(file)
+          })
+
+        const fileBase64 = await toBase64(activeItem.file)
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: activeItem.file.name, fileBase64, removeBg: false }),
+        })
+        const json = await res.json()
+        if (json?.thumbnailPath) {
+          remoteUrl = `storage://${json.thumbnailPath}`
+        } else if (json?.thumbnailUrl) {
+          remoteUrl = json.thumbnailUrl
+        } else if (json?.url) {
+          remoteUrl = json.url
+        }
+      } catch (e) {
+        console.warn('Upload failed, falling back to data URI', e)
+      }
+
+      // fallback: if upload didn't produce a remote URL, store data URI for persistence
+      if (!remoteUrl) {
+        try {
+          const reader = new FileReader()
+          const dataUrl = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string)
+            reader.onerror = reject
+            reader.readAsDataURL(activeItem.file)
+          })
+          remoteUrl = dataUrl
+        } catch (e) {
+          // last resort, keep previewUrl (may be ephemeral)
+          remoteUrl = activeItem.previewUrl
+        }
+      }
+
+      addItemToShelf(selectedType, remoteUrl, {
+        color: color || undefined,
+        styles: styles.length ? styles : undefined,
+        description: description || undefined,
+      })
+
+      setItems((prev) => {
+        const activeIndex = prev.findIndex((item) => item.id === activeItem.id)
+        const nextItems = prev.filter((item) => item.id !== activeItem.id)
+        const nextActive = nextItems[activeIndex] ?? nextItems[activeIndex - 1] ?? nextItems[0] ?? null
+        setActiveItemId(nextActive?.id ?? null)
+        return nextItems
+      })
+      clearCurrentMetadata()
+      setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
+    }
+
+    void uploadAndStore()
   }
 
   function clearPendingItems() {
@@ -382,7 +432,7 @@ export function Upload() {
                             body: JSON.stringify({ filename: it.file.name, fileBase64, removeBg: false }),
                           })
                           const json = await res.json()
-                          const remoteUrl = json.thumbnailUrl || json.url || it.previewUrl
+                          const remoteUrl = json.thumbnailPath ? `storage://${json.thumbnailPath}` : (json.thumbnailUrl || json.url || it.previewUrl)
 
                           addItemToShelf(selectedType, remoteUrl, {
                             color: color || undefined,

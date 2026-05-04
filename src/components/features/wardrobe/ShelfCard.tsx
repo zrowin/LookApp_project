@@ -10,6 +10,38 @@ type Props = {
 }
 
 export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelete, onOpen }: Props) {
+  const [resolved, setResolved] = React.useState<Record<string, string>>({})
+
+  React.useEffect(() => {
+    let active = true
+    async function resolveAll() {
+      const entries = thumbnails.map((t: any) => (typeof t === 'string' ? t : t.url))
+      for (const e of entries) {
+        if (!e) continue
+        if (e.startsWith('storage://')) {
+          const path = e.replace('storage://', '')
+          try {
+            const res = await fetch('/api/storage-url', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ path }),
+            })
+            const json = await res.json()
+            if (!active) return
+            if (json?.signedUrl) {
+              setResolved((r) => ({ ...r, [e]: json.signedUrl }))
+            }
+          } catch (err) {
+            console.warn('Could not resolve storage URL for', path, err)
+          }
+        }
+      }
+    }
+    void resolveAll()
+    return () => {
+      active = false
+    }
+  }, [thumbnails])
   return (
     <div className="rounded-md border border-white/6 bg-[#252425] p-4 text-white shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between mb-3">
@@ -56,14 +88,15 @@ export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelet
       <div className="grid grid-cols-3 gap-3 mb-3 cursor-pointer" onClick={() => onOpen(id)}>
         {thumbnails.length > 0 ? (
           thumbnails.map((t, i) => {
-            const url = typeof t === 'string' ? t : t.url
+            const raw = typeof t === 'string' ? t : t.url
+            const url = raw && raw.startsWith('storage://') ? resolved[raw] ?? '' : raw
             return (
               <div
                 key={i}
                 className="h-24 w-full overflow-hidden rounded"
                 style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
               >
-                <img src={url} alt={`${name}-${i}`} className="h-full w-full object-cover" />
+                {url ? <img src={url} alt={`${name}-${i}`} className="h-full w-full object-cover" /> : null}
               </div>
             )
           })
