@@ -23,6 +23,7 @@ export default function TryOnPage() {
   const canvasRef = React.useRef<HTMLDivElement | null>(null)
   const [isModalOpen, setIsModalOpen] = React.useState(false)
   const [previewDataUrl, setPreviewDataUrl] = React.useState<string | null>(null)
+  const [previewSize, setPreviewSize] = React.useState<{ width: number; height: number } | null>(null)
   const [outfitName, setOutfitName] = React.useState('')
   const [outfitDescription, setOutfitDescription] = React.useState('')
   const [saving, setSaving] = React.useState(false)
@@ -72,8 +73,15 @@ export default function TryOnPage() {
             }
 
             // generate preview thumbnail
-            const dataUrl = await generateThumbnail(items, canvasRef.current)
-            setPreviewDataUrl(dataUrl)
+            const result = await generateThumbnail(items, canvasRef.current)
+            if (!result) {
+              setPreviewDataUrl(null)
+              setPreviewSize(null)
+              alert('Nie udało się wygenerować podglądu')
+              return
+            }
+            setPreviewDataUrl(result.dataUrl)
+            setPreviewSize({ width: result.width, height: result.height })
             setOutfitName('')
             setOutfitDescription('')
             setIsModalOpen(true)
@@ -83,26 +91,30 @@ export default function TryOnPage() {
         {/* Modal for saving outfit */}
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="w-full max-w-md rounded bg-neutral-900 p-4">
-              <h3 className="text-lg font-medium mb-2">Zapisz stylizację</h3>
-              <div className="mb-3">
-                <div className="h-40 w-full bg-gray-800 rounded-md overflow-hidden flex items-center justify-center mb-2">
-                  {previewDataUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={previewDataUrl} alt="Podgląd" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="text-white/40">Brak podglądu</div>
-                  )}
-                </div>
-
-                <label className="text-sm block mb-1">Nazwa</label>
-                <input value={outfitName} onChange={(e) => setOutfitName(e.target.value)} className="w-full rounded border px-3 py-2 bg-black text-white" />
-
-                <label className="text-sm block mt-2 mb-1">Opis (opcjonalnie)</label>
-                <textarea value={outfitDescription} onChange={(e) => setOutfitDescription(e.target.value)} className="w-full rounded border px-3 py-2 bg-black text-white" rows={3} />
+            <div className="w-full max-w-md rounded-xl border border-white/6 bg-[#252425] p-4 text-white shadow-sm">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <h3 className="text-lg font-semibold">Zapisz stylizację</h3>
               </div>
 
-              <div className="flex justify-end gap-2">
+              <div
+                className="flex w-full items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-[#3a3a3a] mb-3"
+                style={previewSize ? { aspectRatio: `${previewSize.width}/${previewSize.height}` } : { height: 160 }}
+              >
+                {previewDataUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={previewDataUrl} alt="Podgląd" className="block h-auto w-full object-contain" />
+                ) : (
+                  <div className="flex w-full items-center justify-center text-white/40">Brak miniaturki</div>
+                )}
+              </div>
+
+              <label className="text-sm block mb-1">Nazwa</label>
+              <input value={outfitName} onChange={(e) => setOutfitName(e.target.value)} className="w-full rounded border border-white/6 px-3 py-2 bg-black text-white mb-2" />
+
+              <label className="text-sm block mt-2 mb-1">Opis (opcjonalnie)</label>
+              <textarea value={outfitDescription} onChange={(e) => setOutfitDescription(e.target.value)} className="w-full rounded border border-white/6 px-3 py-2 bg-black text-white" rows={3} />
+
+              <div className="mt-3 flex justify-end gap-2">
                 <button onClick={() => setIsModalOpen(false)} className="rounded px-3 py-2 bg-white text-black">Anuluj</button>
                 <button
                   onClick={async () => {
@@ -178,9 +190,9 @@ async function drawItemsToCanvas(items: CanvasItem[], container: HTMLDivElement 
   return off
 }
 
-async function generateThumbnail(items: CanvasItem[], container: HTMLDivElement | null) {
+async function generateThumbnail(items: CanvasItem[], container: HTMLDivElement | null): Promise<{ dataUrl: string; width: number; height: number } | null> {
   const off = await drawItemsToCanvas(items, container)
-  if (!off) return ''
+  if (!off) return null
 
   // generate thumbnail scaled to 480px width max
   const thumbW = 480
@@ -190,5 +202,5 @@ async function generateThumbnail(items: CanvasItem[], container: HTMLDivElement 
   thumbCanvas.height = Math.round(off.height * scale)
   const tctx = thumbCanvas.getContext('2d')
   if (tctx) tctx.drawImage(off, 0, 0, thumbCanvas.width, thumbCanvas.height)
-  return thumbCanvas.toDataURL('image/png')
+  return { dataUrl: thumbCanvas.toDataURL('image/png'), width: thumbCanvas.width, height: thumbCanvas.height }
 }

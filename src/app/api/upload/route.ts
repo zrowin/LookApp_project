@@ -108,7 +108,7 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
   // Log final urls for easier local debugging
   console.log('Upload result for', imageId, { url: publicUrl, thumbnailUrl: returnedThumb, thumbnailPath: thumbPath })
 
-  return { id: imageId, url: publicUrl, thumbnailUrl: returnedThumb, originalPath: path, thumbnailPath }
+  return { id: imageId, url: publicUrl, thumbnailUrl: returnedThumb, originalPath: path, thumbnailPath: thumbPath }
 }
 
 export async function POST(req: Request) {
@@ -122,4 +122,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message || 'Server error' }, { status })
   }
 }
-
