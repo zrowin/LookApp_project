@@ -35,7 +35,7 @@ export default function ShelfDetailPage() {
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-5xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between mb-4">
           <div>
             <button onClick={() => router.push('/wardrobe')} className="text-sm text-gray-400">← Powrót</button>
@@ -47,11 +47,11 @@ export default function ShelfDetailPage() {
         {shelf.thumbnails.length === 0 ? (
           <div className="mt-8 text-center text-gray-400">Brak ubrań na półce.</div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
+          <div className="masonry-gallery masonry-gallery--shelf-detail mt-6">
             {shelf.thumbnails.map((t: any, i: number) => (
-              <div key={t.id} className="relative rounded overflow-hidden bg-[#3a3a3a] border border-white/5 group">
-                <div className="w-full h-64 overflow-hidden">
-                  <img src={t.url} alt={`item-${i}`} className="w-full h-full object-cover" />
+              <div key={t.id} className="masonry-item group relative overflow-hidden rounded-2xl border border-white/5 bg-[#3a3a3a]">
+                <div className="w-full overflow-hidden">
+                  <img src={t.url} alt={`item-${i}`} className="masonry-photo" />
                 </div>
 
                 <div className="absolute inset-0 flex flex-col justify-end p-3 bg-black/0 transition-opacity opacity-0 group-hover:opacity-100 group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">

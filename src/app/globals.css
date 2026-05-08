@@ -15,6 +15,86 @@
     text-wrap: balance;
   }
 
+  .masonry-gallery {
+    column-fill: balance;
+  }
+
+  .masonry-gallery--shelves {
+    column-count: 1;
+    column-gap: 12px;
+  }
+
+  .masonry-gallery--shelf-preview {
+    column-count: 2;
+    column-gap: 8px;
+  }
+
+  .masonry-gallery--shelf-detail {
+    column-count: 2;
+    column-gap: 14px;
+  }
+
+  .masonry-gallery--tryon {
+    column-count: 2;
+    column-gap: 8px;
+  }
+
+  .masonry-item {
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid;
+    margin-bottom: 12px;
+    vertical-align: top;
+  }
+
+  .masonry-gallery--shelf-preview .masonry-item,
+  .masonry-gallery--tryon .masonry-item {
+    margin-bottom: 8px;
+  }
+
+  .masonry-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  @media (min-width: 640px) {
+    .masonry-gallery--shelves {
+      column-count: 2;
+    }
+
+    .masonry-gallery--shelf-detail {
+      column-count: 3;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry-gallery--shelves {
+      column-count: 3;
+      column-gap: 14px;
+    }
+
+    .masonry-gallery--shelf-detail {
+      column-count: 4;
+      column-gap: 16px;
+    }
+
+    .masonry-gallery--tryon {
+      column-count: 3;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .masonry-gallery--shelves {
+      column-count: 4;
+    }
+
+    .masonry-gallery--shelf-detail {
+      column-count: 5;
+    }
+  }
+
   .animate-in {
     animation: animate-in 0.5s ease-out;
   }

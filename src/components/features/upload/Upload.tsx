@@ -241,8 +241,12 @@ export function Upload() {
             <div className="flex flex-col gap-3 sm:flex-row">
               {activeItem && (
                 <div className="min-w-0 flex-1">
-                  <div className="overflow-hidden rounded-lg border border-white/5 bg-[#3a3a3a]">
-                    <img src={activeItem.previewUrl} alt={activeItem.file.name} className="h-80 w-full object-cover" />
+                  <div className="flex max-h-[32rem] items-center justify-center overflow-hidden rounded-lg">
+                    <img
+                      src={activeItem.previewUrl}
+                      alt={activeItem.file.name}
+                      className="h-auto max-h-[32rem] w-auto max-w-full rounded-lg border border-white/5 object-contain"
+                    />
                   </div>
                   <div className="mt-2 flex items-center justify-between gap-3 text-sm text-white/60">
                     <span>
@@ -255,16 +259,20 @@ export function Upload() {
               )}
 
               {queuedItems.length > 0 && (
-                <div className="flex gap-2 overflow-auto sm:w-28 sm:flex-col">
+                <div className="flex items-start gap-2 overflow-auto sm:w-28 sm:flex-col">
                   {queuedItems.map((it) => (
                     <button
                       type="button"
                       key={it.id}
                       onClick={() => setActiveItemId(it.id)}
-                      className="h-20 w-20 shrink-0 overflow-hidden rounded border border-white/10 bg-[#3a3a3a] sm:h-24 sm:w-full"
+                      className="shrink-0 overflow-hidden rounded border border-white/10 bg-transparent p-0 sm:w-full"
                       aria-label={`Edytuj ${it.file.name}`}
                     >
-                      <img src={it.previewUrl} alt={it.file.name} className="h-full w-full object-cover" />
+                      <img
+                        src={it.previewUrl}
+                        alt={it.file.name}
+                        className="block h-auto max-h-24 w-auto max-w-24 object-contain sm:max-h-none sm:w-full sm:max-w-full"
+                      />
                     </button>
                   ))}
                 </div>
@@ -410,56 +418,6 @@ export function Upload() {
 
               <div className="flex items-center gap-3">
                 <Button
-                  onClick={() => {
-                    if (!selectedType) return
-
-                    // upload files to server and use returned public URLs
-                    async function uploadAndSave() {
-                      for (const it of items) {
-                        try {
-                          const toBase64 = (file: File) =>
-                            new Promise<string>((resolve, reject) => {
-                              const reader = new FileReader()
-                              reader.onload = () => resolve((reader.result as string).split(',')[1])
-                              reader.onerror = reject
-                              reader.readAsDataURL(file)
-                            })
-
-                          const fileBase64 = await toBase64(it.file)
-                          const res = await fetch('/api/upload', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ filename: it.file.name, fileBase64, removeBg: false }),
-                          })
-                          const json = await res.json()
-                          const remoteUrl = json.thumbnailPath ? `storage://${json.thumbnailPath}` : (json.thumbnailUrl || json.url || it.previewUrl)
-
-                          addItemToShelf(selectedType, remoteUrl, {
-                            color: color || undefined,
-                            styles: styles.length ? styles : undefined,
-                            description: description || undefined,
-                          })
-                        } catch (e) {
-                          console.error('Upload failed for', it.file.name, e)
-                          // fallback to local preview
-                          addItemToShelf(selectedType, it.previewUrl, {
-                            color: color || undefined,
-                            styles: styles.length ? styles : undefined,
-                            description: description || undefined,
-                          })
-                        }
-                      }
-
-                      // clear selected items and refresh shelves
-                      setItems([])
-                      setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
-                      alert('Zapisano do wybranej półki')
-                    }
-
-                    void uploadAndSave()
-                  }}
-                  disabled={!selectedType}
-                  className={`px-4 py-2 ${!selectedType ? 'opacity-50 pointer-events-none' : ''} bg-white text-black`}
                   type="button"
                   onClick={saveActiveItem}
                   disabled={!selectedType || !activeItem || !!activeItem.error}

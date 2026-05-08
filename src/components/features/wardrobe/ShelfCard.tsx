@@ -11,6 +11,7 @@ type Props = {
 
 export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelete, onOpen }: Props) {
   const [resolved, setResolved] = React.useState<Record<string, string>>({})
+  const previewThumbnails = thumbnails.slice(0, 3)
 
   React.useEffect(() => {
     let active = true
@@ -43,7 +44,7 @@ export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelet
     }
   }, [thumbnails])
   return (
-    <div className="rounded-md border border-white/6 bg-[#252425] p-4 text-white shadow-sm transition-shadow hover:shadow-md">
+    <div className="rounded-xl border border-white/6 bg-[#252425] p-3 text-white shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between mb-3">
         <h3 className="text-lg font-semibold">{name}</h3>
         <div className="flex items-center gap-2">
@@ -85,15 +86,15 @@ export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelet
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-3 cursor-pointer" onClick={() => onOpen(id)}>
-        {thumbnails.length > 0 ? (
-          thumbnails.map((t, i) => {
+      <div className="mb-3 grid cursor-pointer grid-cols-3 gap-3" onClick={() => onOpen(id)}>
+        {previewThumbnails.length > 0 ? (
+          previewThumbnails.map((t, i) => {
             const raw = typeof t === 'string' ? t : t.url
             const url = raw && raw.startsWith('storage://') ? resolved[raw] ?? '' : raw
             return (
               <div
                 key={i}
-                className="h-24 w-full overflow-hidden rounded"
+                className="h-24 w-full overflow-hidden rounded-xl"
                 style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
               >
                 {url ? <img src={url} alt={`${name}-${i}`} className="h-full w-full object-cover" /> : null}
@@ -104,7 +105,7 @@ export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelet
           Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="h-24 w-full overflow-hidden rounded"
+              className="h-24 w-full overflow-hidden rounded-xl"
               style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
             />
           ))

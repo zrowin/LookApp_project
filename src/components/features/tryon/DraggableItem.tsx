@@ -42,8 +42,8 @@ export default function DraggableItem({ item }: { item: { id: string; src: strin
   }
 
   return (
-    <div className="w-full h-28 bg-white/5 rounded overflow-hidden">
-      <img src={item.src} draggable onDragStart={onDragStart} className="w-full h-full cursor-grab object-cover" alt="ubranie" />
+    <div className="w-full overflow-hidden rounded-2xl bg-white/5">
+      <img src={item.src} draggable onDragStart={onDragStart} className="masonry-photo cursor-grab" alt="ubranie" />
     </div>
   )
 }
