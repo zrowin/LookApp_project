@@ -70,7 +70,7 @@ export default function WardrobePage() {
       {shelves.length === 0 ? (
         <EmptyState onAdd={() => addShelf()} />
       ) : (
-        <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+        <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {shelves.map((s: any) => (
             <div key={s.id} className="p-1">
               <ShelfCard

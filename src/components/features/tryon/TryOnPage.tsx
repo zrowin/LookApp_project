@@ -35,13 +35,13 @@ export default function TryOnPage() {
         <h1 className="text-2xl font-semibold">Przymierzalnia</h1>
       </header>
 
-      <div className="mx-auto max-w-6xl px-4 py-2 flex gap-6">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-2 lg:flex-row">
         <div className="relative flex flex-1 items-stretch">
           <CanvasArea items={items} onAdd={addItem} onUpdate={updateItem} onRemove={removeItem} />
           <SavedIndicator />
         </div>
 
-        <div className="w-80">
+        <div className="w-full shrink-0 lg:w-96 xl:w-[28rem]">
           <WardrobeSidebar />
         </div>
       </div>

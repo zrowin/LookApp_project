@@ -10,6 +10,13 @@ type ShelfFilter = {
   style: string
 }
 
+function splitIntoColumns<T>(items: T[], columnCount: number) {
+  return items.reduce<T[][]>((columns, item, index) => {
+    columns[index % columnCount].push(item)
+    return columns
+  }, Array.from({ length: columnCount }, () => []))
+}
+
 export default function WardrobeSidebar() {
   const [shelves, setShelves] = React.useState<Shelf[]>([])
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({})
@@ -60,6 +67,7 @@ export default function WardrobeSidebar() {
             const matchesStyle = !filter.style || (item.styles || []).includes(filter.style)
             return matchesColor && matchesStyle
           })
+          const itemColumns = splitIntoColumns(filteredItems, 2)
 
           return (
             <div key={shelf.id} className="border border-white/6 rounded p-2 bg-white/2">
@@ -110,16 +118,22 @@ export default function WardrobeSidebar() {
                     </label>
                   </div>
 
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    {shelfItems.length === 0 && <div className="text-white/40 col-span-2">Pusta półka</div>}
+                  <div className="mt-2">
+                    {shelfItems.length === 0 && <div className="text-white/40">Pusta półka</div>}
                     {shelfItems.length > 0 && filteredItems.length === 0 && (
-                      <div className="text-white/40 col-span-2">Brak ubrań dla filtrów.</div>
+                      <div className="text-white/40">Brak ubrań dla filtrów.</div>
                     )}
-                    {filteredItems.map((it: ShelfItem) => (
-                      <div key={it.id}>
-                        <DraggableItem item={{ id: it.id, src: it.url }} />
+                    {filteredItems.length > 0 && (
+                      <div className="flex items-start gap-2">
+                        {itemColumns.map((column, columnIndex) => (
+                          <div key={columnIndex} className="flex min-w-0 flex-1 flex-col gap-2">
+                            {column.map((it: ShelfItem) => (
+                              <DraggableItem key={it.id} item={{ id: it.id, src: it.url }} />
+                            ))}
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 </>
               )}
