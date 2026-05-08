@@ -4,13 +4,14 @@ import { NextResponse, type NextRequest } from 'next/server';
 /**
  * Protected routes that require authentication
  */
-// TODO: enable auth protection for `/wardrobe` when auth is implemented
-const protectedRoutes = ['/outfit-builder', '/outfits', '/settings']
+// Auth protection currently disabled for development; keep list empty
+const protectedRoutes: string[] = []
 
 /**
  * Auth routes that should redirect if already logged in
  */
-const authRoutes = ['/login', '/register', '/forgot-password']
+// No dedicated auth pages (login/register) — keep empty to avoid redirects
+const authRoutes: string[] = []
 
 /**
  * Check if the path is a protected route
