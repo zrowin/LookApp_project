@@ -26,5 +26,6 @@ export interface Outfit {
   owner?: string
   clothingItemIds: string[]
   coverImageId?: string
+  thumbnailDataUrl?: string
   createdAt?: string
 }

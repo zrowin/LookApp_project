@@ -1,10 +1,18 @@
 "use client"
 
-export default function SavedIndicator() {
+import React from 'react'
+
+export default function SavedIndicator({ onOpen }: { onOpen?: () => void }) {
+  function handleClick() {
+    if (!onOpen) return
+    onOpen()
+  }
+
   return (
     <div className="absolute bottom-4 right-4 z-10">
       <button
         type="button"
+        onClick={handleClick}
         className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#252425] shadow-lg transition-transform hover:scale-105"
         aria-label="Dodaj do ulubionych"
       >
