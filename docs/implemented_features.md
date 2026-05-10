@@ -1,88 +1,151 @@
 # Implemented Features
 
-Lista wszystkich zaimplementowanych funkcjonalności projektu LookApp.
+Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa w toku.
 
-## Mapa dokumentów
+## Mapa dokumentow
 
-- Full navigation: [Mapa dokumentów — NAVIGATION.md](NAVIGATION.md)
-
+- Full navigation: [Mapa dokumentow - NAVIGATION.md](NAVIGATION.md)
 
 ## [00] Bootstrap Next.js Application
 
-- **Data wdrożenia:** 2026-03-26
-- **Plan:** [00 - Bootstrap Next.js Application](docs/plans/00_nextjs_bootstrap.md)
-- **Opis:** Inicjalizacja projektu Next.js 14 z App Router, TypeScript i Tailwind CSS. Konfiguracja Supabase client (frontend) i podstawowa struktura katalogów.
-- **Główne komponenty:**
-  - [`src/app/`](src/app/) - App Router structure (layout, page, globals.css)
-  - [`src/components/ui/`](src/components/ui/) - Base UI components (Button, Input, Card)
-  - [`src/lib/supabase/client.ts`](src/lib/supabase/client.ts) - Supabase browser client
-  - [`src/hooks/useUser.ts`](src/hooks/useUser.ts) - User and session hooks
-  - [`src/types/index.ts`](src/types/index.ts) - TypeScript types
-  - [`src/middleware.ts`](src/middleware.ts) - Auth middleware
-  - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) - CI pipeline
-  - [`tailwind.config.ts`](tailwind.config.ts) - Tailwind CSS with design tokens
-  - [`.eslintrc.json`](.eslintrc.json) - ESLint configuration
-  - [`.prettierrc`](.prettierrc) - Prettier configuration
-- **Status:** ✅ Ukończone
+- **Data wdrozenia:** 2026-03-26
+- **Plan:** [00 - Bootstrap Next.js Application](plans/00_nextjs_bootstrap.md)
+- **Opis:** Inicjalizacja aplikacji Next.js z App Router, TypeScript, Tailwind CSS, podstawowymi komponentami UI, klientami Supabase i szkieletem routingu.
+- **Status:** Completed
+
+### Wdrozone aspekty
+
+- [x] Struktura App Router: `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`
+- [x] Podstawowe strony aplikacji: dashboard, upload, wardrobe, try-on, outfits, login, register, favorites
+- [x] Komponenty bazowe UI: `Button`, `Input`, `Card`, `TopNav`
+- [x] Konfiguracja TypeScript, Tailwind, ESLint i Prettier
+- [x] Klient Supabase po stronie przegladarki: `src/lib/supabase/client.ts`
+- [x] Szkielet klienta Supabase po stronie serwera/admina: `src/lib/supabase/server.ts`, `src/lib/supabase/admin.ts`
+- [x] Hook uzytkownika i middleware auth: `src/hooks/useUser.ts`, `src/middleware.ts`
+- [x] Podstawowe typy domenowe: `src/types/index.ts`, `src/types/db.ts`
+- [x] Pipeline CI: `.github/workflows/ci.yml`
 
 ---
 
-## [01] Dodawanie zdjęć ubrań (Upload + BG Removal)
+## [01] Dodawanie zdjec ubran (Upload + Storage + Miniaturki)
 
-- **Data wdrożenia:** 2026-04-20
-- **Plan:** [01 - Upload and Background Removal](docs/plans/01_upload_and_bg_removal.md)
-- **Opis:** Zaimplementowano podstawowy mechanizm uploadu obrazów z klienta, serwerowy endpoint przyjmujący pliki (base64), zapis do Supabase Storage oraz generowanie miniaturek (WebP). Dodano także szkic komponentu UI z drag&drop, podglądem i walidacją rozmiaru/typu oraz test integracyjny (mock Supabase).
-- **Główne komponenty:**
-  - `src/components/features/upload/Upload.tsx` — komponent uploadu (drag&drop, preview, walidacja)
-  - `src/components/features/upload/index.tsx` — export komponentu
-  - `src/lib/supabase/server.ts` — server-side Supabase client (service role scaffold)
-  - `src/lib/supabase/admin.ts` — admin helpers (scaffold)
-  - `src/app/api/upload/route.ts` — API route `POST /api/upload` i `handleUpload()` (zapis do storage, generowanie miniaturek)
-  - `src/lib/images/thumbnail.ts` — helper generujący miniaturki (sharp → webp)
-  - `tests/upload.integration.test.js` — integracyjny test uploadu (mock Supabase)
-  - `package.json` — dodane zależności `sharp` i `ts-node` dla testów i obróbki obrazów
-- **Status:** 🟡 W trakcie
+- **Data wdrozenia:** 2026-04-20
+- **Plan:** [01 - Upload and Background Removal](plans/01_upload_and_bg_removal.md)
+- **Opis:** Zaimplementowano upload obrazow, zapis do Supabase Storage, zapis podstawowych metadanych do tabeli `images`, generowanie miniaturek WebP oraz UI z podgladem i walidacja.
+- **Status:** In progress - gotowe sa upload, storage i miniaturki; background removal nie jest jeszcze wdrozony.
 
+### Wdrozone aspekty
 
-## Lista zadań do wdrożenia (checkboxy)
-
-Poniższa lista zadań powstała na podstawie [docs/implemented_plans.md](docs/implemented_plans.md). Każdy punkt można oznaczyć jako wykonany poprzez zaznaczenie checkboxa.
-
-### 01 - Dodawanie zdjęć ubrań
-- [x] Stworzyć UI uploadu w src/components/features/upload (drag & drop, podgląd, pasek postępu)
-- [x] Backend: endpoint do przyjmowania plików i zapis w storage; zapis metadanych (owner, nazwa pliku, wymiary, rozmiar, hash, timestamp)
-- [x] Implementować generowanie miniatur i wersji webp; ustawić limit rozmiaru i walidację typów
- - [ ] Przygotować schemat DB/IndexedDB dla `clothing_items` i mechanizm opcjonalnej synchronizacji z backendem
-- [ ] (Opcjonalne) Integracja z serwisem do usuwania tła (background removal)
-- [x] Napisać testy akceptacyjne: upload działa, plik w storage, poprawne metadane
-
-### 02 - Kategoryzacja ubrań (tagowanie)
-- [x] Zaprojektować model danych: `categories`, `tags` oraz relacje wiele-do-wiele z `clothing_items` (typy TS zdefiniowane)
-- [x] Dodać UI do edycji metadanych i przypisywania tagów (widok pojedynczy + bulk edit) (podstawowe pola w komponencie upload)
-- [ ] Implementować endpoint/autotagger zwracający proponowane tagi (integracja z ML lub zewnętrznym serwisem)
-- [ ] Rozszerzyć wyszukiwanie i filtry o kategorię, tagi, kolor i materiał
- - [ ] Przygotować migracje DB / aktualizację schematu IndexedDB
-- [ ] Napisać testy akceptacyjne: ręczne tagowanie i autotagging, filtry działają poprawnie
-
-### 03 - Dobieranie zdjęć — tworzenie stroju (Outfit Builder)
-- [x] Zaprojektować model danych: tabela `outfits` z listą `clothing_item_ids` i metadanymi (nazwa, opis, cover image, owner, timestamp) (typ `Outfit` w `src/types`)
-- [ ] Zaimplementować UI buildera w `src/components/features/outfits` (canvas/siatka, drag&drop, pozycjonowanie)
-- [ ] Wstępny silnik dopasowań: reguły heurystyczne (np. nie łączyć dwóch spodni)
-- [ ] Rozszerzyć opcjonalnie o rekomendacje ML (kolor harmony, styl, okazja)
-- [ ] Dodać funkcje zapisu wersji, udostępniania linków i eksportu do mediów społecznościowych
-- [ ] Napisać testy akceptacyjne: tworzenie, zapis i ponowne ładowanie outfitów
-
-### 04 - Komunikaty i informacje zwrotne (UX feedback)
-- [ ] Wybrać lub stworzyć komponent powiadomień (`Toast`) oraz hook `useToast` w `src/components/ui` lub `src/hooks`
-- [ ] Zintegrować powiadomienia z kluczowymi akcjami: upload, autotagging, zapis outfitów, synchronizacja
-- [ ] Dodać dostępność (role ARIA, czytelność dla czytników ekranowych, opcje timeoutu)
-- [ ] Zaimplementować globalny provider/context do wywoływania komunikatów z dowolnego miejsca aplikacji
-- [ ] (Opcjonalne) Dodać historię komunikatów lub panel debugowy do szczegółowych logów
-- [ ] Napisać testy akceptacyjne: komunikaty pojawiają się i są czytelne dla dostępności
+- [x] UI uploadu z wyborem wielu plikow, drag and drop i lokalnym podgladem: `src/components/features/upload/Upload.tsx`
+- [x] Walidacja typu pliku i limitu 10 MB po stronie klienta
+- [x] Endpoint `POST /api/upload` przyjmujacy `fileBase64`: `src/app/api/upload/route.ts`
+- [x] Zapis oryginalnego pliku do bucketu `clothing-images`
+- [x] Generowanie miniaturki WebP przez `sharp`: `src/lib/images/thumbnail.ts`
+- [x] Zapis miniaturki do Supabase Storage
+- [x] Rozwiazywanie adresow storage przez signed/public URL: `src/app/api/storage-url/route.ts`
+- [x] Zapis metadanych obrazu do tabeli `images`: `id`, `owner_id`, `original_url`, `processed_url`, `status`, `created_at`
+- [x] Fallback do `data:image/...` dla lokalnego podgladu, gdy storage URL nie jest dostepny
+- [x] Test integracyjny uploadu z mockiem Supabase: `tests/upload.integration.test.js`
+- [ ] Usuwanie tla przez zewnetrzny serwis lub model lokalny
+- [ ] Pelny zapis wymiarow, rozmiaru, hasha i nazwy pliku w metadanych
+- [ ] Endpoint pobierania metadanych pojedynczego obrazu, np. `GET /api/images/:id`
 
 ---
 
-Jeśli chcesz, mogę teraz:
-- zaktualizować statusy w TODO (oznaczyć krok 1 jako ukończony),
-- albo od razu oznaczyć wszystkie kroki w planie jako rozpoczęte/ukończone.
+## [02] Kategoryzacja ubran i reczne tagowanie
+
+- **Data wdrozenia:** 2026-04-21
+- **Plan:** [02 - Auto-tagging](plans/02_auto_tagging.md)
+- **Opis:** Wdrozone sa podstawowe mechanizmy recznej kategoryzacji podczas uploadu: wybor polki, koloru, stylow oraz opisu. Automatyczne tagowanie ML nie jest jeszcze wdrozone.
+- **Status:** In progress - reczne tagowanie dziala, autotagging jest planowany.
+
+### Wdrozone aspekty
+
+- [x] Model polki i elementu garderoby w localStorage: `src/lib/shelves.ts`
+- [x] Typy `ClothingItem` i `Tag` w `src/types/db.ts`
+- [x] Schemat IndexedDB dla `clothing_items`, `tags`, `outfits`, `metadata`: `src/lib/db/indexedDB.ts`
+- [x] Reczne przypisanie zdjecia do polki/kategorii w uploadzie
+- [x] Reczny wybor koloru z palety w uploadzie
+- [x] Reczny wybor wielu stylow oraz dodawanie wlasnego stylu
+- [x] Reczny opis elementu garderoby
+- [x] Wyswietlanie koloru, stylow i opisu w szczegolach polki
+- [x] Filtrowanie elementow w przymierzalni po kolorze i stylu: `src/components/features/tryon/WardrobeSidebar.tsx`
+- [x] Podstawowy import obrazow z tabeli `images` do polki `Imported`: `DataService.syncToServer`
+- [ ] Endpoint autotaggingu zwracajacy propozycje tagow
+- [ ] Integracja z modelem ML lub zewnetrznym serwisem rozpoznawania obrazu
+- [ ] Wyszukiwanie po kategorii, tagach, kolorze i materiale w widoku szafy
+- [ ] Migracje DB dla docelowych tabel `categories`, `tags` i relacji wiele-do-wiele
+- [ ] Testy akceptacyjne dla recznego tagowania, autotaggingu i filtrowania
+
+---
+
+## [03] Przymierzalnia / Outfit Builder
+
+- **Data wdrozenia:** 2026-05-10
+- **Plan:** [03 - Outfit Builder](plans/03_outfit_builder.md)
+- **Opis:** Zaimplementowano klientowy builder stylizacji z biblioteka ubran, drag and drop na canvas, przesuwaniem, zmiana rozmiaru, warstwami oraz zapisem miniaturki outfitu lokalnie.
+- **Status:** In progress - builder MVP dziala lokalnie; brakuje backendowego API i rekomendacji.
+
+### Wdrozone aspekty
+
+- [x] Strona przymierzalni: `src/app/try-on/page.tsx`
+- [x] Komponent glowny buildera: `src/components/features/tryon/TryOnPage.tsx`
+- [x] Canvas do komponowania stylizacji: `src/components/features/tryon/CanvasArea.tsx`
+- [x] Panel biblioteki ubran z polkami: `src/components/features/tryon/WardrobeSidebar.tsx`
+- [x] Drag and drop ubran z biblioteki na canvas
+- [x] Przesuwanie elementow po canvasie
+- [x] Zmiana rozmiaru elementow na canvasie
+- [x] Usuwanie elementow z canvasu
+- [x] Zmiana kolejnosci warstw: na wierzch / pod spod
+- [x] Generowanie miniaturki stylizacji z canvasu
+- [x] Modal zapisu z nazwa i opisem stylizacji
+- [x] Zapis outfitu do IndexedDB przez `DataService.saveOutfit`
+- [ ] Rotacja elementow na canvasie
+- [ ] Zapis pozycji i transformacji elementow w docelowym modelu outfitu
+- [ ] Backendowe endpointy `POST /api/outfits` i `GET /api/outfits/:id`
+- [ ] Silnik heurystycznych dopasowan lub rekomendacji
+- [ ] Udostepnianie linkow i eksport do social media
+- [ ] Testy akceptacyjne buildera
+
+---
+
+## [04] Zapis i zarzadzanie outfitami
+
+- **Data wdrozenia:** 2026-05-10
+- **Plan:** [04 - Save and Manage Outfits](plans/04_save_and_manage_outfits.md)
+- **Opis:** Dodano lokalny zapis outfitow, liste zapisanych stylizacji, edycje nazwy/opisu oraz usuwanie. Brakuje jeszcze backendowego CRUD, uprawnien i trybu public/private.
+- **Status:** In progress - lokalne zarzadzanie dziala, backend jest planowany.
+
+### Wdrozone aspekty
+
+- [x] Model `Outfit` w `src/types/db.ts`
+- [x] Store `outfits` w IndexedDB
+- [x] Metody `saveOutfit`, `listOutfits`, `getOutfit`, `deleteOutfit` w `DataService`
+- [x] Zapis stylizacji z przymierzalni
+- [x] Lista zapisanych stylizacji: `src/app/outfits/page.tsx`
+- [x] Redirect `/saved-outfits` do `/outfits`
+- [x] Podglad miniaturki outfitu na liscie
+- [x] Edycja nazwy i opisu outfitu
+- [x] Usuwanie outfitu
+- [ ] Backendowe endpointy CRUD `/api/outfits`
+- [ ] Strona szczegolow pojedynczego outfitu
+- [ ] Tryb public/private
+- [ ] Eksport/share miniaturki
+- [ ] Testy CRUD i uprawnien
+
+---
+
+## [05] Komunikaty i informacje zwrotne
+
+- **Opis:** Aktualnie aplikacja uzywa prostych komunikatow `alert`, `confirm` i `prompt`. Dedykowany system toastow nie zostal jeszcze wdrozony.
+- **Status:** Planned
+
+### Wdrozone aspekty
+
+- [x] Podstawowe komunikaty natywne przegladarki dla zapisu, bledow, usuwania i edycji
+- [ ] Komponent `Toast`
+- [ ] Hook `useToast`
+- [ ] Globalny provider powiadomien
+- [ ] Integracja toastow z uploadem, zapisem outfitow i synchronizacja
+- [ ] Testy dostepnosci komunikatow
 

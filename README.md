@@ -23,25 +23,38 @@ Poniżej krótki spis plików z folderu [docs/business-analysis](docs/business-a
 
 ## Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) with App Router
+- **Framework**: [Next.js](https://nextjs.org/) with App Router
 - **Language**: [TypeScript](https://www.typescriptlang.org/) (strict mode)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) with custom design tokens
-- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Storage & backend services**: [Supabase](https://supabase.com/) Storage and database scaffolding
 - **Client-side DB**: IndexedDB (native browser API) — using plain IndexedDB, not Dexie.js
-- **Payments**: [Stripe](https://stripe.com/)
+- **Image processing**: Sharp for WebP thumbnail generation
+- **Payments**: [Stripe](https://stripe.com/) planned
 - **State Management**: React hooks + context
 - **Code Quality**: ESLint, Prettier, TypeScript
 
 ## Features
 
-- 📸 Upload and organize clothing photos
-- ✂️ Automatic background removal
-- 👗 Virtual wardrobe management
-- 🎨 Drag-and-drop outfit builder
-- 💾 Save and manage outfit combinations
-- 📱 Responsive design for mobile and desktop
-- 🔐 User authentication with Supabase Auth
-- 💳 Subscription management with Stripe
+### Implemented / in progress
+
+- Upload clothing photos with drag and drop, preview, file type validation and a 10 MB limit.
+- Store uploaded images in Supabase Storage and generate WebP thumbnails with Sharp.
+- Resolve Supabase storage previews through signed/public URLs via `/api/storage-url`.
+- Organize clothing items into wardrobe shelves with color, style and description metadata.
+- Preview wardrobe shelves and individual shelf contents.
+- Use wardrobe items in the try-on builder with drag and drop, move, resize, remove and layer controls.
+- Save outfit combinations locally in IndexedDB with generated preview thumbnails.
+- List, rename and delete locally saved outfits.
+- Run upload and data service tests with Jest.
+
+### Planned / not fully implemented yet
+
+- Automatic background removal.
+- ML-based auto-tagging.
+- Full Supabase Auth onboarding flow.
+- Backend CRUD API for outfits.
+- Public/private outfit sharing and social export.
+- Stripe subscription management.
 
 ## Getting Started
 
@@ -49,8 +62,8 @@ Poniżej krótki spis plików z folderu [docs/business-analysis](docs/business-a
 
 - Node.js 20 or later
 - npm, yarn, or pnpm
-- A Supabase project (for authentication and database)
-- A Stripe account (for payments)
+- A Supabase project for storage/database features
+- A Stripe account only if you are working on planned billing features
 
 ### Installation
 
@@ -78,6 +91,7 @@ cp .env.example .env.local
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 STRIPE_SECRET_KEY=your-stripe-secret-key
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key
 ```
@@ -101,6 +115,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `npm run lint:fix` | Fix ESLint errors |
 | `npm run format` | Format code with Prettier |
 | `npm run type-check` | Run TypeScript type checking |
+| `npm test` | Run Jest tests |
+| `npm run test:upload` | Run local upload + thumbnail integration test |
 
 ## Supabase storage setup
 
@@ -151,6 +167,17 @@ Notes:
 - If the test fails, copy the terminal error trace and open the related file above — the stack trace typically points to the failing module and line number.
 - For CI runs (GitHub Actions), check the Actions run logs in the repository UI (Actions → workflow run → Logs) for step output and artifacts.
 
+## Current app areas
+
+- `/upload` and `/dashboard/upload` - clothing image upload UI.
+- `/wardrobe` - shelf-based wardrobe view.
+- `/wardrobe/[id]` - shelf detail view with image previews and item metadata.
+- `/try-on` - drag-and-drop outfit builder.
+- `/outfits` - locally saved outfits list with edit/delete actions.
+- `/saved-outfits` - redirects to `/outfits`.
+- `/api/upload` - server upload endpoint, Supabase Storage write and thumbnail generation.
+- `/api/storage-url` - storage path to signed/public URL resolver.
+
 
 
 
@@ -197,10 +224,10 @@ src/
 |----------|-------------|----------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) | Yes |
-| `STRIPE_SECRET_KEY` | Stripe secret key | Yes |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | Yes |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server upload/storage operations | Yes for upload |
+| `STRIPE_SECRET_KEY` | Stripe secret key | Planned |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | Planned |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Planned |
 | `NEXT_PUBLIC_APP_URL` | Application URL | No |
 | `NEXT_PUBLIC_APP_NAME` | Application name | No |
 

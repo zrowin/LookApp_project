@@ -29,11 +29,21 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
     throw err
   }
 
-  // helper to get a usable URL: prefer publicUrl, fall back to signed URL when possible
+  // helper to get a usable URL: prefer signed URLs for private buckets
   async function resolveStorageUrl(path: string) {
     try {
       const from = supabaseServer.storage.from('clothing-images')
-      // try public URL first
+
+      if (typeof from.createSignedUrl === 'function') {
+        try {
+          const { data: signedData, error: signErr } = await from.createSignedUrl(path, 60 * 60 * 24 * 7)
+          if (!signErr && signedData?.signedUrl) return signedData.signedUrl
+          if (signErr) console.warn('createSignedUrl error for', path, signErr)
+        } catch (e) {
+          console.warn('createSignedUrl threw for', path, e)
+        }
+      }
+
       let publicUrl: string | null = null
       try {
         const { data: publicData } = from.getPublicUrl(path)
@@ -43,17 +53,6 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
       }
 
       if (publicUrl) return publicUrl
-
-      // try signed URL if server client supports it
-      if (typeof from.createSignedUrl === 'function') {
-        try {
-          const { data: signedData, error: signErr } = await from.createSignedUrl(path, 60 * 60)
-          if (!signErr && signedData?.signedUrl) return signedData.signedUrl
-          if (signErr) console.warn('createSignedUrl error for', path, signErr)
-        } catch (e) {
-          console.warn('createSignedUrl threw for', path, e)
-        }
-      }
 
       return null
     } catch (e) {
