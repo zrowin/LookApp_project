@@ -9,6 +9,7 @@ export default function ShelfDetailPage() {
   const router = useRouter()
   const id = (params as any)?.id
   const [shelf, setShelf] = React.useState<any | null>(null)
+  const [resolved, setResolved] = React.useState<Record<string, string>>({})
 
   React.useEffect(() => {
     const shelves = getShelves()
@@ -16,10 +17,48 @@ export default function ShelfDetailPage() {
     setShelf(found ?? null)
   }, [id])
 
+  React.useEffect(() => {
+    let active = true
+
+    async function resolveStorageUrls() {
+      const entries: string[] = (shelf?.thumbnails || [])
+        .map((t: any) => (typeof t === 'string' ? t : t.url))
+        .filter((url: string | undefined): url is string => Boolean(url?.startsWith('storage://')))
+
+      for (const entry of Array.from(new Set(entries))) {
+        const path = entry.replace('storage://', '')
+        try {
+          const res = await fetch('/api/storage-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path }),
+          })
+          const json = await res.json()
+          if (!active) return
+          if (json?.signedUrl) {
+            setResolved((current) => ({ ...current, [entry]: json.signedUrl }))
+          }
+        } catch (err) {
+          console.warn('Could not resolve storage URL for', path, err)
+        }
+      }
+    }
+
+    void resolveStorageUrls()
+    return () => {
+      active = false
+    }
+  }, [shelf])
+
   function removeImage(itemId: string) {
     if (!confirm('Usunąć zdjęcie z półki?')) return
     removeItemFromShelf(id, itemId)
     setShelf((prev: any) => ({ ...prev, thumbnails: prev.thumbnails.filter((t: any) => t.id !== itemId) }))
+  }
+
+  function resolveImageUrl(item: any) {
+    const rawUrl = typeof item === 'string' ? item : item.url
+    return rawUrl?.startsWith('storage://') ? resolved[rawUrl] : rawUrl
   }
 
   if (!shelf) {
@@ -51,7 +90,7 @@ export default function ShelfDetailPage() {
             {shelf.thumbnails.map((t: any, i: number) => (
               <div key={t.id} className="masonry-item group relative overflow-hidden rounded-2xl border border-white/5 bg-[#3a3a3a]">
                 <div className="w-full overflow-hidden">
-                  <img src={t.url} alt={`item-${i}`} className="masonry-photo" />
+                  {resolveImageUrl(t) ? <img src={resolveImageUrl(t)} alt={`item-${i}`} className="masonry-photo" /> : null}
                 </div>
 
                 <div className="absolute inset-0 flex flex-col justify-end p-3 bg-black/0 transition-opacity opacity-0 group-hover:opacity-100 group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">

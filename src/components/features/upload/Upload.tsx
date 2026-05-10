@@ -148,7 +148,9 @@ export function Upload() {
           body: JSON.stringify({ filename: activeItem.file.name, fileBase64, removeBg: false }),
         })
         const json = await res.json()
-        if (json?.thumbnailPath) {
+        if (json?.thumbnailUrl?.startsWith('data:')) {
+          remoteUrl = json.thumbnailUrl
+        } else if (json?.thumbnailPath) {
           remoteUrl = `storage://${json.thumbnailPath}`
         } else if (json?.thumbnailUrl) {
           remoteUrl = json.thumbnailUrl

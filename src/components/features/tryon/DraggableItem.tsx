@@ -43,7 +43,11 @@ export default function DraggableItem({ item }: { item: { id: string; src: strin
 
   return (
     <div className="w-full overflow-hidden rounded-2xl bg-white/5">
-      <img src={item.src} draggable onDragStart={onDragStart} className="masonry-photo cursor-grab" alt="ubranie" />
+      {item.src ? (
+        <img src={item.src} draggable onDragStart={onDragStart} className="masonry-photo cursor-grab" alt="ubranie" />
+      ) : (
+        <div className="h-24 w-full flex items-center justify-center text-white/40">Ładowanie...</div>
+      )}
     </div>
   )
 }

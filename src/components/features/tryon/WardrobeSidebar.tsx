@@ -19,6 +19,7 @@ function splitIntoColumns<T>(items: T[], columnCount: number) {
 
 export default function WardrobeSidebar() {
   const [shelves, setShelves] = React.useState<Shelf[]>([])
+  const [resolved, setResolved] = React.useState<Record<string, string>>({})
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({})
   const [filters, setFilters] = React.useState<Record<string, ShelfFilter>>({})
 
@@ -30,6 +31,38 @@ export default function WardrobeSidebar() {
       setShelves([])
     }
   }, [])
+
+  React.useEffect(() => {
+    let active = true
+    async function resolveAll() {
+      const entries = shelves
+        .flatMap((s) => s.thumbnails || [])
+        .map((t: any) => (typeof t === 'string' ? t : t.url))
+        .filter(Boolean)
+      const unique = Array.from(new Set(entries)).filter((e) => e.startsWith('storage://'))
+      for (const e of unique) {
+        const path = e.replace('storage://', '')
+        try {
+          const res = await fetch('/api/storage-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path }),
+          })
+          const json = await res.json()
+          if (!active) return
+          if (json?.signedUrl) {
+            setResolved((r) => ({ ...r, [e]: json.signedUrl }))
+          }
+        } catch (err) {
+          console.warn('Could not resolve storage URL for', path, err)
+        }
+      }
+    }
+    void resolveAll()
+    return () => {
+      active = false
+    }
+  }, [shelves])
 
   function toggleShelf(id: string) {
     setExpanded((s) => ({ ...s, [id]: !s[id] }))
@@ -127,9 +160,11 @@ export default function WardrobeSidebar() {
                       <div className="flex items-start gap-2">
                         {itemColumns.map((column, columnIndex) => (
                           <div key={columnIndex} className="flex min-w-0 flex-1 flex-col gap-2">
-                            {column.map((it: ShelfItem) => (
-                              <DraggableItem key={it.id} item={{ id: it.id, src: it.url }} />
-                            ))}
+                            {column.map((it: ShelfItem) => {
+                              const raw = it.url
+                              const src = raw && raw.startsWith('storage://') ? resolved[raw] ?? '' : raw
+                              return <DraggableItem key={it.id} item={{ id: it.id, src }} />
+                            })}
                           </div>
                         ))}
                       </div>
