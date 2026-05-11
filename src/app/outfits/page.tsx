@@ -6,6 +6,8 @@ import type { Outfit } from '@/types/db'
 
 export default function OutfitsPage() {
   const [outfits, setOutfits] = React.useState<Outfit[]>([])
+  const [selectedOutfit, setSelectedOutfit] = React.useState<Outfit | null>(null)
+  const [selectedOutfitSize, setSelectedOutfitSize] = React.useState<{ width: number; height: number } | null>(null)
 
   React.useEffect(() => {
     let mounted = true
@@ -62,12 +64,35 @@ export default function OutfitsPage() {
       ) : (
         <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {outfits.map((o) => (
-            <div key={o.id} className="relative rounded-xl border border-white/6 bg-[#252425] p-3 text-white shadow-sm transition-shadow hover:shadow-md">
+            <div
+              key={o.id}
+              onClick={async () => {
+                if (!o.thumbnailDataUrl) {
+                  setSelectedOutfit(o)
+                  setSelectedOutfitSize(null)
+                  return
+                }
+                const img = new Image()
+                img.onload = () => {
+                  setSelectedOutfitSize({ width: img.naturalWidth || 1, height: img.naturalHeight || 1 })
+                  setSelectedOutfit(o)
+                }
+                img.onerror = () => {
+                  setSelectedOutfit(o)
+                  setSelectedOutfitSize(null)
+                }
+                img.src = o.thumbnailDataUrl
+              }}
+              className="relative cursor-pointer rounded-xl border border-white/6 bg-[#252425] p-3 text-white shadow-sm transition-shadow hover:shadow-md"
+            >
               <div className="mb-3 flex items-start justify-between gap-3">
                 <h3 className="text-lg font-semibold">{o.name ?? 'Nowy outfit'}</h3>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handleEdit(o)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleEdit(o)
+                    }}
                     className="flex h-8 w-8 items-center justify-center rounded-md text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                     aria-label="Edytuj outfit"
                     type="button"
@@ -83,7 +108,10 @@ export default function OutfitsPage() {
                     </svg>
                   </button>
                   <button
-                    onClick={() => handleDelete(o.id)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDelete(o.id)
+                    }}
                     className="flex h-8 w-8 items-center justify-center rounded-md text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
                     aria-label="Usuń outfit"
                     type="button"
@@ -119,6 +147,70 @@ export default function OutfitsPage() {
           ))}
         </section>
       )}
+          {selectedOutfit && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="w-full max-w-2xl rounded-xl border border-white/6 bg-[#252425] p-3 text-white shadow-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-xl font-semibold">{selectedOutfit.name ?? 'Outfit'}</h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedOutfit(null)}
+                    className="rounded px-2 py-1 text-sm bg-white text-black"
+                    type="button"
+                  >
+                    Zamknij
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-[#3a3a3a] mb-3"
+                style={
+                  selectedOutfitSize
+                    ? { aspectRatio: `${selectedOutfitSize.width}/${selectedOutfitSize.height}`, maxHeight: '520px' }
+                    : { maxHeight: '280px' }
+                }
+              >
+                {selectedOutfit.thumbnailDataUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={selectedOutfit.thumbnailDataUrl}
+                    alt={selectedOutfit.name ?? 'Outfit'}
+                    className="block object-contain"
+                    style={{ width: '115%', height: 'auto', maxWidth: 'none' }}
+                  />
+                ) : (
+                  <div className="flex w-full items-center justify-center text-white/40">Brak miniaturki</div>
+                )}
+              </div>
+
+              <div className="mb-3 text-white/80">{selectedOutfit.description ?? ''}</div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleEdit(selectedOutfit)
+                    setSelectedOutfit(null)
+                  }}
+                  className="rounded px-3 py-2 bg-white text-black"
+                >
+                  Edytuj
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (selectedOutfit) handleDelete(selectedOutfit.id)
+                    setSelectedOutfit(null)
+                  }}
+                  className="rounded px-3 py-2 bg-red-600 text-white"
+                >
+                  Usuń
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </main>
   )
 }
