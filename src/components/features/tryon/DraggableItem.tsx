@@ -32,7 +32,7 @@ export default function DraggableItem({ item }: { item: { id: string; src: strin
       const image = source.cloneNode(true) as HTMLImageElement
       image.style.width = '100%'
       image.style.height = '100%'
-      image.style.objectFit = 'cover'
+      image.style.objectFit = 'contain'
       preview.appendChild(image)
       document.body.appendChild(preview)
 

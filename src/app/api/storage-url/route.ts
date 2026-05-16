@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
       // Final fallback: construct public storage URL (works for public buckets)
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ''
-      if (supabaseUrl) {
+      if (supabaseUrl && !supabaseUrl.includes('placeholder.supabase.co')) {
         const publicUrl = `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${bucket}/${path}`
         return NextResponse.json({ signedUrl: publicUrl })
       }

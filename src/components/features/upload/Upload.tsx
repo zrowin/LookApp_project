@@ -23,6 +23,10 @@ type FileMeta = {
   id: string
   file: File
   previewUrl: string
+  processedPreviewUrl?: string
+  processedFileName?: string
+  isRemovingBg?: boolean
+  removeBgError?: string
   error?: string
 }
 
@@ -125,6 +129,75 @@ export function Upload() {
     setIsColorDropdownOpen(false)
   }
 
+  function toBase64(file: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve((reader.result as string).split(',')[1])
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
+  function getDataUrlBase64(dataUrl: string) {
+    return dataUrl.split(',')[1] || ''
+  }
+
+  async function removeBackgroundFromActiveItem() {
+    if (!activeItem || activeItem.error || activeItem.isRemovingBg) return
+
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === activeItem.id
+          ? { ...item, isRemovingBg: true, removeBgError: undefined }
+          : item,
+      ),
+    )
+
+    try {
+      const fileBase64 = await toBase64(activeItem.file)
+      const res = await fetch('/api/remove-bg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: activeItem.file.name,
+          mimeType: activeItem.file.type,
+          fileBase64,
+        }),
+      })
+      const json = await res.json()
+
+      if (!res.ok || !json?.dataUrl) {
+        throw new Error(json?.error || 'Nie udało się usunąć tła')
+      }
+
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === activeItem.id
+            ? {
+                ...item,
+                processedPreviewUrl: json.dataUrl,
+                processedFileName: json.filename,
+                isRemovingBg: false,
+                removeBgError: undefined,
+              }
+            : item,
+        ),
+      )
+    } catch (err: any) {
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === activeItem.id
+            ? {
+                ...item,
+                isRemovingBg: false,
+                removeBgError: err?.message || 'Nie udało się usunąć tła',
+              }
+            : item,
+        ),
+      )
+    }
+  }
+
   function saveActiveItem() {
     if (!selectedType || !activeItem || activeItem.error) return
 
@@ -133,29 +206,33 @@ export function Upload() {
 
       // try uploading to server to get a persistent storage path
       try {
-        const toBase64 = (file: File) =>
-          new Promise<string>((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = () => resolve((reader.result as string).split(',')[1])
-            reader.onerror = reject
-            reader.readAsDataURL(file)
-          })
-
-        const fileBase64 = await toBase64(activeItem.file)
+        const fileBase64 = activeItem.processedPreviewUrl
+          ? getDataUrlBase64(activeItem.processedPreviewUrl)
+          : await toBase64(activeItem.file)
+        const filename = activeItem.processedPreviewUrl
+          ? activeItem.processedFileName || `${activeItem.file.name.replace(/\.[^.]+$/, '')}-no-bg.png`
+          : activeItem.file.name
         const res = await fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filename: activeItem.file.name, fileBase64, removeBg: false }),
+          body: JSON.stringify({
+            filename,
+            fileBase64,
+            contentType: activeItem.processedPreviewUrl ? 'image/png' : activeItem.file.type,
+            removeBg: Boolean(activeItem.processedPreviewUrl),
+          }),
         })
         const json = await res.json()
-        if (json?.thumbnailUrl?.startsWith('data:')) {
+        if (json?.url && json?.originalPath) {
+          remoteUrl = `storage://${json.originalPath}`
+        } else if (json?.url) {
+          remoteUrl = json.url
+        } else if (json?.thumbnailUrl?.startsWith('data:')) {
           remoteUrl = json.thumbnailUrl
         } else if (json?.thumbnailPath) {
           remoteUrl = `storage://${json.thumbnailPath}`
         } else if (json?.thumbnailUrl) {
           remoteUrl = json.thumbnailUrl
-        } else if (json?.url) {
-          remoteUrl = json.url
         }
       } catch (e) {
         console.warn('Upload failed, falling back to data URI', e)
@@ -164,13 +241,17 @@ export function Upload() {
       // fallback: if upload didn't produce a remote URL, store data URI for persistence
       if (!remoteUrl) {
         try {
-          const reader = new FileReader()
-          const dataUrl = await new Promise<string>((resolve, reject) => {
-            reader.onload = () => resolve(reader.result as string)
-            reader.onerror = reject
-            reader.readAsDataURL(activeItem.file)
-          })
-          remoteUrl = dataUrl
+          if (activeItem.processedPreviewUrl) {
+            remoteUrl = activeItem.processedPreviewUrl
+          } else {
+            const reader = new FileReader()
+            const dataUrl = await new Promise<string>((resolve, reject) => {
+              reader.onload = () => resolve(reader.result as string)
+              reader.onerror = reject
+              reader.readAsDataURL(activeItem.file)
+            })
+            remoteUrl = dataUrl
+          }
         } catch (e) {
           // last resort, keep previewUrl (may be ephemeral)
           remoteUrl = activeItem.previewUrl
@@ -245,7 +326,7 @@ export function Upload() {
                 <div className="min-w-0 flex-1">
                   <div className="flex max-h-[32rem] items-center justify-center overflow-hidden rounded-lg">
                     <img
-                      src={activeItem.previewUrl}
+                      src={activeItem.processedPreviewUrl || activeItem.previewUrl}
                       alt={activeItem.file.name}
                       className="h-auto max-h-[32rem] w-auto max-w-full rounded-lg border border-white/5 object-contain"
                     />
@@ -257,6 +338,10 @@ export function Upload() {
                     <span className="truncate">{activeItem.file.name}</span>
                   </div>
                   {activeItem.error && <div className="mt-2 text-sm text-red-400">{activeItem.error}</div>}
+                  {activeItem.processedPreviewUrl && (
+                    <div className="mt-2 text-sm text-emerald-300">Tlo zostalo usuniete. Ten wariant zostanie zapisany.</div>
+                  )}
+                  {activeItem.removeBgError && <div className="mt-2 text-sm text-red-400">{activeItem.removeBgError}</div>}
                 </div>
               )}
 
@@ -271,7 +356,7 @@ export function Upload() {
                       aria-label={`Edytuj ${it.file.name}`}
                     >
                       <img
-                        src={it.previewUrl}
+                        src={it.processedPreviewUrl || it.previewUrl}
                         alt={it.file.name}
                         className="block h-auto max-h-24 w-auto max-w-24 object-contain sm:max-h-none sm:w-full sm:max-w-full"
                       />
@@ -416,6 +501,26 @@ export function Upload() {
               <div>
                 <label className="block text-sm font-medium mb-1">Opis</label>
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded border bg-black/40 px-3 py-2 text-white" rows={3} />
+              </div>
+
+              <div className="rounded border border-white/10 bg-black/30 p-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="text-sm font-medium text-white">Usun tlo ze zdjecia</div>
+                    <div className="mt-1 text-xs text-white/55">
+                      Po przetworzeniu podglad po lewej zmieni sie na wersje bez tla.
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={removeBackgroundFromActiveItem}
+                    disabled={!activeItem || !!activeItem.error || !!activeItem.isRemovingBg}
+                    className="shrink-0"
+                  >
+                    {activeItem?.isRemovingBg ? 'Przetwarzanie...' : activeItem?.processedPreviewUrl ? 'Usun ponownie' : 'Usun tlo'}
+                  </Button>
+                </div>
               </div>
 
               <div className="flex items-center gap-3">

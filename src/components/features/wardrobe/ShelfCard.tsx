@@ -97,7 +97,7 @@ export default function ShelfCard({ id, name, thumbnails = [], onRename, onDelet
                 className="h-24 w-full overflow-hidden rounded-xl"
                 style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
               >
-                {url ? <img src={url} alt={`${name}-${i}`} className="h-full w-full object-cover" /> : null}
+                {url ? <img src={url} alt={`${name}-${i}`} className="h-full w-full object-contain" /> : null}
               </div>
             )
           })

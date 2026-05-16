@@ -3,7 +3,18 @@ import createThumbnail from '../../../lib/images/thumbnail.ts'
 
 const MAX_BYTES = 10 * 1024 * 1024 // 10MB
 
-export async function handleUpload({ filename, fileBase64, removeBg, userId }: { filename: string; fileBase64: string; removeBg?: boolean; userId?: string }) {
+export async function handleUpload({
+  filename,
+  fileBase64,
+  contentType,
+  userId,
+}: {
+  filename: string
+  fileBase64: string
+  contentType?: string
+  removeBg?: boolean
+  userId?: string
+}) {
   if (!filename || !fileBase64) {
     throw new Error('Missing filename or fileBase64')
   }
@@ -20,7 +31,10 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
   const imageId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   const path = `${ownerId}/${imageId}/${filename}`
 
-  const { error: uploadError } = await supabaseServer.storage.from('clothing-images').upload(path, buffer, { upsert: false })
+  const { error: uploadError } = await supabaseServer.storage.from('clothing-images').upload(path, buffer, {
+    upsert: false,
+    contentType,
+  })
   if (uploadError) {
     console.error('Supabase upload error for', path, uploadError)
     const err: any = new Error('Upload failed')
@@ -94,7 +108,7 @@ export async function handleUpload({ filename, fileBase64, removeBg, userId }: {
         owner_id: ownerId,
         original_url: publicUrl,
         processed_url: thumbUrl,
-        status: removeBg ? 'processing' : 'ready',
+        status: 'ready',
         created_at: new Date().toISOString(),
       },
     ])
