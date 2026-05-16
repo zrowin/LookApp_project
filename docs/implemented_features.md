@@ -31,24 +31,31 @@ Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa 
 
 - **Data wdrozenia:** 2026-04-20
 - **Plan:** [01 - Upload and Background Removal](plans/01_upload_and_bg_removal.md)
-- **Opis:** Zaimplementowano upload obrazow, zapis do Supabase Storage, zapis podstawowych metadanych do tabeli `images`, generowanie miniaturek WebP oraz UI z podgladem i walidacja.
-- **Status:** In progress - gotowe sa upload, storage i miniaturki; background removal nie jest jeszcze wdrozony.
+- **Opis:** Zaimplementowano upload obrazow, zapis do Supabase Storage, zapis podstawowych metadanych do tabeli `images`, generowanie miniaturek WebP, UI z podgladem i walidacja oraz reczne usuwanie tla przez remove.bg przed zapisem elementu.
+- **Status:** In progress - gotowe sa upload, storage, miniaturki i reczne background removal; brakuje jeszcze pelnych metadanych, endpointu szczegolow obrazu i docelowego asynchronicznego pipeline'u przetwarzania.
 
 ### Wdrozone aspekty
 
 - [x] UI uploadu z wyborem wielu plikow, drag and drop i lokalnym podgladem: `src/components/features/upload/Upload.tsx`
 - [x] Walidacja typu pliku i limitu 10 MB po stronie klienta
 - [x] Endpoint `POST /api/upload` przyjmujacy `fileBase64`: `src/app/api/upload/route.ts`
-- [x] Zapis oryginalnego pliku do bucketu `clothing-images`
+- [x] Przekazywanie `contentType` do uploadu w Supabase Storage
+- [x] Zapis oryginalnego lub przetworzonego pliku do bucketu `clothing-images`
 - [x] Generowanie miniaturki WebP przez `sharp`: `src/lib/images/thumbnail.ts`
 - [x] Zapis miniaturki do Supabase Storage
 - [x] Rozwiazywanie adresow storage przez signed/public URL: `src/app/api/storage-url/route.ts`
+- [x] Pomijanie publicznego fallbacku storage dla placeholderowego `NEXT_PUBLIC_SUPABASE_URL`
 - [x] Zapis metadanych obrazu do tabeli `images`: `id`, `owner_id`, `original_url`, `processed_url`, `status`, `created_at`
 - [x] Fallback do `data:image/...` dla lokalnego podgladu, gdy storage URL nie jest dostepny
+- [x] Endpoint `POST /api/remove-bg` integrujacy remove.bg i zwracajacy PNG bez tla jako `dataUrl`: `src/app/api/remove-bg/route.ts`
+- [x] Obsluga `REMOVE_BG_API_KEY` po stronie serwera oraz komunikat 501, gdy klucz nie jest skonfigurowany
+- [x] Przycisk "Usun tlo" w uploadzie z obsluga stanu przetwarzania, bledow i ponownego przetworzenia
+- [x] Zapis wariantu bez tla jako pliku PNG `*-no-bg.png`, jesli uzytkownik wykonal usuwanie tla przed zapisem
+- [x] Preferowanie trwalego `storage://originalPath` po uploadzie, z fallbackiem do URL, miniaturki lub lokalnego `dataUrl`
 - [x] Test integracyjny uploadu z mockiem Supabase: `tests/upload.integration.test.js`
-- [ ] Usuwanie tla przez zewnetrzny serwis lub model lokalny
 - [ ] Pelny zapis wymiarow, rozmiaru, hasha i nazwy pliku w metadanych
 - [ ] Endpoint pobierania metadanych pojedynczego obrazu, np. `GET /api/images/:id`
+- [ ] Asynchroniczny pipeline background removal z kolejka/statusem zamiast synchronicznego przetwarzania w UI
 
 ---
 
@@ -73,7 +80,7 @@ Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa 
 - [x] Podstawowy import obrazow z tabeli `images` do polki `Imported`: `DataService.syncToServer`
 - [ ] Endpoint autotaggingu zwracajacy propozycje tagow
 - [ ] Integracja z modelem ML lub zewnetrznym serwisem rozpoznawania obrazu
-- [ ] Wyszukiwanie po kategorii, tagach, kolorze i materiale w widoku szafy
+- [ ] Wyszukiwanie po stylu i kolorze w widoku szafy
 - [ ] Migracje DB dla docelowych tabel `categories`, `tags` i relacji wiele-do-wiele
 - [ ] Testy akceptacyjne dla recznego tagowania, autotaggingu i filtrowania
 
@@ -97,6 +104,7 @@ Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa 
 - [x] Zmiana rozmiaru elementow na canvasie
 - [x] Usuwanie elementow z canvasu
 - [x] Zmiana kolejnosci warstw: na wierzch / pod spod
+- [x] Poprawiony kontrast canvasa i pustego stanu dla elementow po usunieciu tla: `src/components/features/tryon/CanvasArea.tsx`
 - [x] Generowanie miniaturki stylizacji z canvasu
 - [x] Modal zapisu z nazwa i opisem stylizacji
 - [x] Zapis outfitu do IndexedDB przez `DataService.saveOutfit`

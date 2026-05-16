@@ -52,9 +52,10 @@ export default function CanvasArea({
       onPointerDown={(e) => {
         if (e.target === e.currentTarget) setSelectedItemId(null)
       }}
-      className="relative flex-1 h-[70vh] rounded-md border border-white/6 bg-black overflow-hidden"
+      className="relative flex-1 h-[70vh] rounded-md border border-white/6 overflow-hidden"
       style={{
-        backgroundImage: 'radial-gradient(circle, #252425 1px, transparent 1px)',
+        backgroundColor: '#252425',
+        backgroundImage: 'radial-gradient(circle, #000000 1px, transparent 1px)',
         backgroundSize: '18px 18px',
       }}
     >
@@ -75,7 +76,7 @@ export default function CanvasArea({
           parentRef={ref}
         />
       ))}
-      {items.length === 0 && <div className="absolute inset-0 flex items-center justify-center text-white/40">Przeciągnij ubrania tutaj</div>}
+      {items.length === 0 && <div className="absolute inset-0 flex items-center justify-center text-white/25">Przeciągnij ubrania tutaj</div>}
     </div>
   )
 }
