@@ -1,15 +1,15 @@
-"use client"
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 export default function SavedIndicator({ onOpen }: { onOpen?: () => void }) {
   function handleClick() {
-    if (!onOpen) return
-    onOpen()
+    if (!onOpen) return;
+    onOpen();
   }
 
   return (
-    <div className="absolute bottom-4 right-4 z-10">
+    <div className="absolute right-4 bottom-4 z-10">
       <button
         type="button"
         onClick={handleClick}
@@ -18,13 +18,14 @@ export default function SavedIndicator({ onOpen }: { onOpen?: () => void }) {
       >
         <svg viewBox="0 0 24 24" fill="none" className="h-9 w-9" xmlns="http://www.w3.org/2000/svg">
           <path
-            d="M12 21s-6.716-4.35-9.173-6.692C-0.32 10.886 3.12 6.5 7.5 8.5 9.418 9.41 12 12 12 12s2.582-2.59 4.5-3.5C20.88 6.5 24.32 10.886 21.173 14.308 18.716 16.65 12 21 12 21z"
+            d="M12 20.4s-6.9-4.35-8.8-8.05C1.55 9.15 3.45 6.2 6.7 6.2c2.05 0 3.45 1.15 4.15 2.25.35.55.95.55 1.3 0 .7-1.1 2.1-2.25 4.15-2.25 3.25 0 5.15 2.95 3.5 6.15C18.9 16.05 12 20.4 12 20.4z"
             stroke="currentColor"
-            strokeWidth="0.8"
-            fill="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </button>
     </div>
-  )
+  );
 }

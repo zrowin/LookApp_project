@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   * {
@@ -11,6 +11,33 @@
 }
 
 @layer utilities {
+  .app-shell {
+    width: 100%;
+    max-width: 118rem;
+    margin-inline: auto;
+    padding: 2rem clamp(1.25rem, 3vw, 3rem) 4rem;
+  }
+
+  .app-page-header {
+    margin-bottom: clamp(1.75rem, 3vw, 3rem);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .app-card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 2vw, 2.25rem);
+  }
+
+  .app-wide-panel {
+    width: 100%;
+    max-width: 118rem;
+    margin-inline: auto;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -60,6 +87,10 @@
   }
 
   @media (min-width: 640px) {
+    .app-card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .masonry-gallery--shelves {
       column-count: 2;
     }
@@ -70,6 +101,10 @@
   }
 
   @media (min-width: 1024px) {
+    .app-card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .masonry-gallery--shelves {
       column-count: 3;
       column-gap: 14px;

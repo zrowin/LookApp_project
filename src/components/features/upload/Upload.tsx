@@ -1,8 +1,10 @@
-import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { getShelves, addShelf as addShelfUtil, addItemToShelf } from '@/lib/shelves'
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
+import { getShelves, addShelf as addShelfUtil, addItemToShelf } from '@/lib/shelves';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_SAVED_IMAGE_DIMENSION = 500;
+const FALLBACK_IMAGE_QUALITY = 0.95;
 
 const COLOR_OPTIONS = [
   { label: 'Czarny', value: 'czarny', swatch: '#000000' },
@@ -16,145 +18,236 @@ const COLOR_OPTIONS = [
   { label: 'Fioletowy', value: 'fioletowy', swatch: '#8b5cf6' },
   { label: 'Niebieski', value: 'niebieski', swatch: '#3b82f6' },
   { label: 'Zielony', value: 'zielony', swatch: '#22c55e' },
-  { label: 'Wielobarwny', value: 'wielobarwny', swatch: 'conic-gradient(#ef4444, #facc15, #22c55e, #3b82f6, #8b5cf6, #ef4444)' },
-]
+  {
+    label: 'Wielobarwny',
+    value: 'wielobarwny',
+    swatch: 'conic-gradient(#ef4444, #facc15, #22c55e, #3b82f6, #8b5cf6, #ef4444)',
+  },
+];
 
 type FileMeta = {
-  id: string
-  file: File
-  previewUrl: string
-  processedPreviewUrl?: string
-  processedFileName?: string
-  isRemovingBg?: boolean
-  removeBgError?: string
-  error?: string
-}
+  id: string;
+  file: File;
+  previewUrl: string;
+  processedPreviewUrl?: string;
+  processedFileName?: string;
+  isRemovingBg?: boolean;
+  removeBgError?: string;
+  error?: string;
+};
+
+type QueuedUpload = {
+  shelfId?: string;
+  files?: File[];
+};
+
+const UPLOAD_QUEUE_KEY = '__lookappUploadQueue';
 
 export function Upload() {
-  const inputRef = React.useRef<HTMLInputElement | null>(null)
-  const [items, setItems] = React.useState<FileMeta[]>([])
-  const [activeItemId, setActiveItemId] = React.useState<string | null>(null)
-  const [selectedType, setSelectedType] = React.useState<string>('')
-  const [color, setColor] = React.useState<string>('')
-  const [isColorDropdownOpen, setIsColorDropdownOpen] = React.useState(false)
-  const [styles, setStyles] = React.useState<string[]>([])
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const [items, setItems] = React.useState<FileMeta[]>([]);
+  const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
+  const [selectedType, setSelectedType] = React.useState<string>('');
+  const [typeError, setTypeError] = React.useState(false);
+  const [color, setColor] = React.useState<string>('');
+  const [isColorDropdownOpen, setIsColorDropdownOpen] = React.useState(false);
+  const [styles, setStyles] = React.useState<string[]>([]);
   const [availableStyles, setAvailableStyles] = React.useState<string[]>([
     'Casual',
     'Formal',
     'Sport',
     'Street',
     'Vintage',
-  ])
-  const [description, setDescription] = React.useState<string>('')
-  const [shelves, setShelves] = React.useState<{ id: string; name: string }[]>([])
+  ]);
+  const [description, setDescription] = React.useState<string>('');
+  const [shelves, setShelves] = React.useState<{ id: string; name: string }[]>([]);
 
-  const itemsRef = React.useRef<FileMeta[]>([])
-  const activeItem = items.find((item) => item.id === activeItemId) ?? items[0]
-  const queuedItems = items.filter((item) => item.id !== activeItem?.id)
-  const selectedColor = COLOR_OPTIONS.find((option) => option.value === color)
+  const itemsRef = React.useRef<FileMeta[]>([]);
+  const activeItem = items.find((item) => item.id === activeItemId) ?? items[0];
+  const queuedItems = items.filter((item) => item.id !== activeItem?.id);
+  const selectedColor = COLOR_OPTIONS.find((option) => option.value === color);
 
   // keep ref in sync with items
   React.useEffect(() => {
-    itemsRef.current = items
-  }, [items])
+    itemsRef.current = items;
+  }, [items]);
 
   // revoke any remaining object URLs only when component unmounts
   React.useEffect(() => {
     return () => {
-      itemsRef.current.forEach((it) => URL.revokeObjectURL(it.previewUrl))
-    }
-  }, [])
+      itemsRef.current.forEach((it) => URL.revokeObjectURL(it.previewUrl));
+    };
+  }, []);
 
   React.useEffect(() => {
-    setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
-  }, [])
+    setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })));
+  }, []);
 
   React.useEffect(() => {
     if (items.length === 0) {
-      setActiveItemId(null)
-      return
+      setActiveItemId(null);
+      return;
     }
 
     if (!activeItemId || !items.some((item) => item.id === activeItemId)) {
-      setActiveItemId(items[0].id)
+      setActiveItemId(items[0].id);
     }
-  }, [activeItemId, items])
+  }, [activeItemId, items]);
 
   function validateFile(file: File): string | undefined {
-    if (!file.type.startsWith('image/')) return 'Nieobsługiwany typ pliku'
-    if (file.size > MAX_FILE_SIZE) return 'Plik przekracza maks. rozmiar 10 MB'
-    return undefined
+    if (!file.type.startsWith('image/')) return 'Nieobsługiwany typ pliku';
+    if (file.size > MAX_FILE_SIZE) return 'Plik przekracza maks. rozmiar 10 MB';
+    return undefined;
   }
 
-  function addFiles(list: FileList | null) {
-    if (!list) return
-    const newItems: FileMeta[] = Array.from(list).map((file) => {
-      const previewUrl = URL.createObjectURL(file)
+  function addFileArray(files: File[]) {
+    const newItems: FileMeta[] = files.map((file) => {
+      const previewUrl = URL.createObjectURL(file);
       return {
         id: `${file.name}-${file.size}-${Date.now()}`,
         file,
         previewUrl,
         error: validateFile(file),
-      }
-    })
-    setItems((prev) => [...prev, ...newItems])
+      };
+    });
+    setItems((prev) => [...prev, ...newItems]);
   }
 
+  function addFiles(list: FileList | null) {
+    if (!list) return;
+    addFileArray(Array.from(list));
+  }
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const queuedUpload = (window as any)[UPLOAD_QUEUE_KEY] as QueuedUpload | undefined;
+    if (!queuedUpload) return;
+
+    delete (window as any)[UPLOAD_QUEUE_KEY];
+
+    if (queuedUpload.shelfId) {
+      setSelectedType(queuedUpload.shelfId);
+      setTypeError(false);
+    }
+
+    if (queuedUpload.files?.length) {
+      addFileArray(queuedUpload.files);
+    }
+  }, []);
+
   function onInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    addFiles(e.target.files)
-    e.currentTarget.value = ''
+    addFiles(e.target.files);
+    e.currentTarget.value = '';
   }
 
   function onDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    addFiles(e.dataTransfer.files)
+    e.preventDefault();
+    addFiles(e.dataTransfer.files);
   }
 
   function onDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault()
+    e.preventDefault();
   }
 
   function removeItem(id: string) {
     setItems((prev) => {
-      const toRemove = prev.find((p) => p.id === id)
-      if (toRemove) URL.revokeObjectURL(toRemove.previewUrl)
-      return prev.filter((p) => p.id !== id)
-    })
+      const toRemove = prev.find((p) => p.id === id);
+      if (toRemove) URL.revokeObjectURL(toRemove.previewUrl);
+      return prev.filter((p) => p.id !== id);
+    });
   }
 
   function clearCurrentMetadata() {
-    setColor('')
-    setStyles([])
-    setDescription('')
-    setIsColorDropdownOpen(false)
+    setColor('');
+    setStyles([]);
+    setDescription('');
+    setIsColorDropdownOpen(false);
+    setTypeError(false);
   }
 
   function toBase64(file: File) {
     return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve((reader.result as string).split(',')[1])
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   function getDataUrlBase64(dataUrl: string) {
-    return dataUrl.split(',')[1] || ''
+    return dataUrl.split(',')[1] || '';
+  }
+
+  function readFileAsDataUrl(file: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function loadImage(dataUrl: string) {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = dataUrl;
+    });
+  }
+
+  function getCanvasMimeType(preferredType?: string) {
+    if (
+      preferredType === 'image/png' ||
+      preferredType === 'image/webp' ||
+      preferredType === 'image/jpeg'
+    ) {
+      return preferredType;
+    }
+
+    return 'image/jpeg';
+  }
+
+  async function resizeDataUrlToSavedSize(dataUrl: string, preferredType?: string) {
+    const image = await loadImage(dataUrl);
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    const longestSide = Math.max(sourceWidth, sourceHeight);
+
+    if (!sourceWidth || !sourceHeight || longestSide <= MAX_SAVED_IMAGE_DIMENSION) {
+      return dataUrl;
+    }
+
+    const scale = MAX_SAVED_IMAGE_DIMENSION / longestSide;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(sourceWidth * scale);
+    canvas.height = Math.round(sourceHeight * scale);
+
+    const context = canvas.getContext('2d');
+    if (!context) return dataUrl;
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const outputType = getCanvasMimeType(preferredType);
+    if (outputType === 'image/png') {
+      return canvas.toDataURL(outputType);
+    }
+
+    return canvas.toDataURL(outputType, FALLBACK_IMAGE_QUALITY);
   }
 
   async function removeBackgroundFromActiveItem() {
-    if (!activeItem || activeItem.error || activeItem.isRemovingBg) return
+    if (!activeItem || activeItem.error || activeItem.isRemovingBg) return;
 
     setItems((prev) =>
       prev.map((item) =>
-        item.id === activeItem.id
-          ? { ...item, isRemovingBg: true, removeBgError: undefined }
-          : item,
-      ),
-    )
+        item.id === activeItem.id ? { ...item, isRemovingBg: true, removeBgError: undefined } : item
+      )
+    );
 
     try {
-      const fileBase64 = await toBase64(activeItem.file)
+      const fileBase64 = await toBase64(activeItem.file);
       const res = await fetch('/api/remove-bg', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -163,11 +256,11 @@ export function Upload() {
           mimeType: activeItem.file.type,
           fileBase64,
         }),
-      })
-      const json = await res.json()
+      });
+      const json = await res.json();
 
       if (!res.ok || !json?.dataUrl) {
-        throw new Error(json?.error || 'Nie udało się usunąć tła')
+        throw new Error(json?.error || 'Nie udało się usunąć tła');
       }
 
       setItems((prev) =>
@@ -180,9 +273,9 @@ export function Upload() {
                 isRemovingBg: false,
                 removeBgError: undefined,
               }
-            : item,
-        ),
-      )
+            : item
+        )
+      );
     } catch (err: any) {
       setItems((prev) =>
         prev.map((item) =>
@@ -192,26 +285,32 @@ export function Upload() {
                 isRemovingBg: false,
                 removeBgError: err?.message || 'Nie udało się usunąć tła',
               }
-            : item,
-        ),
-      )
+            : item
+        )
+      );
     }
   }
 
   function saveActiveItem() {
-    if (!selectedType || !activeItem || activeItem.error) return
+    if (!activeItem || activeItem.error) return;
+
+    if (!selectedType) {
+      setTypeError(true);
+      return;
+    }
 
     async function uploadAndStore() {
-      let remoteUrl = ''
+      let remoteUrl = '';
 
       // try uploading to server to get a persistent storage path
       try {
         const fileBase64 = activeItem.processedPreviewUrl
           ? getDataUrlBase64(activeItem.processedPreviewUrl)
-          : await toBase64(activeItem.file)
+          : await toBase64(activeItem.file);
         const filename = activeItem.processedPreviewUrl
-          ? activeItem.processedFileName || `${activeItem.file.name.replace(/\.[^.]+$/, '')}-no-bg.png`
-          : activeItem.file.name
+          ? activeItem.processedFileName ||
+            `${activeItem.file.name.replace(/\.[^.]+$/, '')}-no-bg.png`
+          : activeItem.file.name;
         const res = await fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -221,40 +320,35 @@ export function Upload() {
             contentType: activeItem.processedPreviewUrl ? 'image/png' : activeItem.file.type,
             removeBg: Boolean(activeItem.processedPreviewUrl),
           }),
-        })
-        const json = await res.json()
+        });
+        const json = await res.json();
         if (json?.url && json?.originalPath) {
-          remoteUrl = `storage://${json.originalPath}`
+          remoteUrl = `storage://${json.originalPath}`;
         } else if (json?.url) {
-          remoteUrl = json.url
+          remoteUrl = json.url;
         } else if (json?.thumbnailUrl?.startsWith('data:')) {
-          remoteUrl = json.thumbnailUrl
+          remoteUrl = json.thumbnailUrl;
         } else if (json?.thumbnailPath) {
-          remoteUrl = `storage://${json.thumbnailPath}`
+          remoteUrl = `storage://${json.thumbnailPath}`;
         } else if (json?.thumbnailUrl) {
-          remoteUrl = json.thumbnailUrl
+          remoteUrl = json.thumbnailUrl;
         }
       } catch (e) {
-        console.warn('Upload failed, falling back to data URI', e)
+        console.warn('Upload failed, falling back to data URI', e);
       }
 
       // fallback: if upload didn't produce a remote URL, store data URI for persistence
       if (!remoteUrl) {
         try {
           if (activeItem.processedPreviewUrl) {
-            remoteUrl = activeItem.processedPreviewUrl
+            remoteUrl = await resizeDataUrlToSavedSize(activeItem.processedPreviewUrl, 'image/png');
           } else {
-            const reader = new FileReader()
-            const dataUrl = await new Promise<string>((resolve, reject) => {
-              reader.onload = () => resolve(reader.result as string)
-              reader.onerror = reject
-              reader.readAsDataURL(activeItem.file)
-            })
-            remoteUrl = dataUrl
+            const dataUrl = await readFileAsDataUrl(activeItem.file);
+            remoteUrl = await resizeDataUrlToSavedSize(dataUrl, activeItem.file.type);
           }
         } catch (e) {
           // last resort, keep previewUrl (may be ephemeral)
-          remoteUrl = activeItem.previewUrl
+          remoteUrl = activeItem.previewUrl;
         }
       }
 
@@ -262,65 +356,101 @@ export function Upload() {
         color: color || undefined,
         styles: styles.length ? styles : undefined,
         description: description || undefined,
-      })
+      });
 
       setItems((prev) => {
-        const activeIndex = prev.findIndex((item) => item.id === activeItem.id)
-        const nextItems = prev.filter((item) => item.id !== activeItem.id)
-        const nextActive = nextItems[activeIndex] ?? nextItems[activeIndex - 1] ?? nextItems[0] ?? null
-        setActiveItemId(nextActive?.id ?? null)
-        return nextItems
-      })
-      clearCurrentMetadata()
-      setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })))
+        const activeIndex = prev.findIndex((item) => item.id === activeItem.id);
+        const nextItems = prev.filter((item) => item.id !== activeItem.id);
+        const nextActive =
+          nextItems[activeIndex] ?? nextItems[activeIndex - 1] ?? nextItems[0] ?? null;
+        setActiveItemId(nextActive?.id ?? null);
+        return nextItems;
+      });
+      clearCurrentMetadata();
+      setShelves(getShelves().map((s) => ({ id: s.id, name: s.name })));
     }
 
-    void uploadAndStore()
+    void uploadAndStore();
   }
 
   function clearPendingItems() {
-    items.forEach((item) => URL.revokeObjectURL(item.previewUrl))
-    setItems([])
-    clearCurrentMetadata()
+    items.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+    setItems([]);
+    clearCurrentMetadata();
   }
 
   return (
     <div className="space-y-6 text-white">
-      <div
-        className="rounded-md border border-white/6 p-6 text-center flex flex-col justify-center md:p-8"
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        style={{ backgroundColor: '#252425', minHeight: '40vh' }}
-      >
-        <div className="mb-4 flex items-center justify-center">
-          <svg className="h-10 w-10 text-white/90" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 16V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M8 12l4-4 4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.2"/>
-          </svg>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={onInputChange}
+        className="hidden"
+      />
+
+      {items.length === 0 && (
+        <div className="space-y-3">
+          <p className="text-center text-sm text-white/60">
+            Najlepiej sprawdzą się zdjęcia, na których ubranie jest dobrze ułożone, widoczne w
+            całości i leży na możliwie jednolitym tle.
+          </p>
+
+          <div
+            className="flex flex-col justify-center rounded-md border border-white/6 p-6 text-center md:p-8"
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            style={{ backgroundColor: '#252425', minHeight: '40vh' }}
+          >
+            <div className="mb-4 flex items-center justify-center">
+              <svg
+                className="h-10 w-10 text-white/90"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 16V8"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M8 12l4-4 4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="16"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                />
+              </svg>
+            </div>
+            <p className="mb-3 text-lg text-white">Przeciągnij pliki tutaj lub wybierz z dysku</p>
+            <div className="flex items-center justify-center gap-3">
+              <Button onClick={() => inputRef.current?.click()} className="bg-white text-black">
+                Wybierz pliki
+              </Button>
+              <div className="text-sm text-gray-300">Max 10 MB na plik. Tylko obrazy.</div>
+            </div>
+          </div>
         </div>
-        <p className="mb-3 text-lg text-white">Przeciągnij pliki tutaj lub wybierz z dysku</p>
-        <div className="flex items-center justify-center gap-3">
-          <Button onClick={() => inputRef.current?.click()} className="bg-white text-black">
-            Wybierz pliki
-          </Button>
-          <div className="text-sm text-gray-300">Max 10 MB na plik. Tylko obrazy.</div>
-        </div>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={onInputChange}
-          className="hidden"
-        />
-      </div>
+      )}
 
       {items.length > 0 && (
-        <div className="space-y-4 bg-black/40 p-4 rounded-lg">
-          <h4 className="font-semibold text-lg">Podgląd i kategoryzacja</h4>
+        <div className="space-y-4 rounded-lg bg-black/40 p-4">
+          <h4 className="text-lg font-semibold">Podgląd i kategoryzacja</h4>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-3 sm:flex-row">
               {activeItem && (
                 <div className="min-w-0 flex-1">
@@ -331,17 +461,17 @@ export function Upload() {
                       className="h-auto max-h-[32rem] w-auto max-w-full rounded-lg border border-white/5 object-contain"
                     />
                   </div>
-                  <div className="mt-2 flex items-center justify-between gap-3 text-sm text-white/60">
-                    <span>
-                      {items.findIndex((item) => item.id === activeItem.id) + 1} z {items.length}
-                    </span>
-                    <span className="truncate">{activeItem.file.name}</span>
-                  </div>
-                  {activeItem.error && <div className="mt-2 text-sm text-red-400">{activeItem.error}</div>}
-                  {activeItem.processedPreviewUrl && (
-                    <div className="mt-2 text-sm text-emerald-300">Tlo zostalo usuniete. Ten wariant zostanie zapisany.</div>
+                  {activeItem.error && (
+                    <div className="mt-2 text-sm text-red-400">{activeItem.error}</div>
                   )}
-                  {activeItem.removeBgError && <div className="mt-2 text-sm text-red-400">{activeItem.removeBgError}</div>}
+                  {activeItem.processedPreviewUrl && (
+                    <div className="mt-2 text-sm text-emerald-300">
+                      Tlo zostalo usuniete. Ten wariant zostanie zapisany.
+                    </div>
+                  )}
+                  {activeItem.removeBgError && (
+                    <div className="mt-2 text-sm text-red-400">{activeItem.removeBgError}</div>
+                  )}
                 </div>
               )}
 
@@ -374,23 +504,27 @@ export function Upload() {
 
             <form className="space-y-3">
               <div>
-                <label className="block text-sm font-medium mb-1">Typ ubrania (wymagane)</label>
+                <label className="mb-1 block text-sm font-medium">Typ ubrania (wymagane)</label>
                 <select
                   value={selectedType}
                   onChange={(e) => {
-                    const v = e.target.value
+                    const v = e.target.value;
                     if (v === '__add__') {
-                      const name = window.prompt('Nazwa półki')
+                      const name = window.prompt('Nazwa półki');
                       if (name) {
-                        const s = addShelfUtil(name)
-                        setShelves((prev) => [...prev, { id: s.id, name: s.name }])
-                        setSelectedType(s.id)
+                        const s = addShelfUtil(name);
+                        setShelves((prev) => [...prev, { id: s.id, name: s.name }]);
+                        setSelectedType(s.id);
+                        setTypeError(false);
                       }
                     } else {
-                      setSelectedType(v)
+                      setSelectedType(v);
+                      setTypeError(false);
                     }
                   }}
-                  className="w-full rounded border bg-black/40 px-3 py-2 text-white"
+                  className={`w-full rounded border bg-black/40 px-3 py-2 text-white ${
+                    typeError ? 'border-red-500' : 'border-white/20'
+                  }`}
                 >
                   <option value="">Wybierz półkę</option>
                   {shelves.map((s) => (
@@ -400,10 +534,21 @@ export function Upload() {
                   ))}
                   <option value="__add__">+ Dodaj nową półkę</option>
                 </select>
+                {typeError && (
+                  <div className="mt-2 flex items-center gap-2 text-sm text-red-400">
+                    <span
+                      className="flex h-4 w-4 items-center justify-center rounded-full border border-red-400 text-xs leading-none"
+                      aria-hidden="true"
+                    >
+                      ×
+                    </span>
+                    <span>Nie wybrano typu ubrania.</span>
+                  </div>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Kolor</label>
+                <label className="mb-1 block text-sm font-medium">Kolor</label>
                 <div className="relative">
                   <button
                     type="button"
@@ -441,8 +586,8 @@ export function Upload() {
                           type="button"
                           key={option.value}
                           onClick={() => {
-                            setColor(option.value)
-                            setIsColorDropdownOpen(false)
+                            setColor(option.value);
+                            setIsColorDropdownOpen(false);
                           }}
                           className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white hover:bg-white/10 ${
                             color === option.value ? 'bg-white/10' : ''
@@ -464,16 +609,18 @@ export function Upload() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Styl (możesz wybrać kilka)</label>
+                <label className="mb-1 block text-sm font-medium">Styl (możesz wybrać kilka)</label>
                 <div className="flex flex-wrap gap-2">
                   {availableStyles.map((s) => (
                     <button
                       type="button"
                       key={s}
                       onClick={() =>
-                        setStyles((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]))
+                        setStyles((prev) =>
+                          prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+                        )
                       }
-                      className={`px-3 py-1 rounded-full text-sm ${styles.includes(s) ? 'bg-white text-black' : 'bg-transparent border border-white/10 text-white'}`}
+                      className={`rounded-full px-3 py-1 text-sm ${styles.includes(s) ? 'bg-white text-black' : 'border border-white/10 bg-transparent text-white'}`}
                     >
                       {s}
                     </button>
@@ -482,16 +629,16 @@ export function Upload() {
                   <button
                     type="button"
                     onClick={() => {
-                      const name = window.prompt('Podaj nazwę stylu')
-                      if (!name) return
-                      const trimmed = name.trim()
-                      if (!trimmed) return
+                      const name = window.prompt('Podaj nazwę stylu');
+                      if (!name) return;
+                      const trimmed = name.trim();
+                      if (!trimmed) return;
                       if (!availableStyles.includes(trimmed)) {
-                        setAvailableStyles((prev) => [...prev, trimmed])
+                        setAvailableStyles((prev) => [...prev, trimmed]);
                       }
-                      setStyles((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]))
+                      setStyles((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
                     }}
-                    className="px-3 py-1 rounded-full text-sm bg-transparent border border-dashed border-white/20 text-white"
+                    className="rounded-full border border-dashed border-white/20 bg-transparent px-3 py-1 text-sm text-white"
                   >
                     + Dodaj styl
                   </button>
@@ -499,8 +646,13 @@ export function Upload() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Opis</label>
-                <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded border bg-black/40 px-3 py-2 text-white" rows={3} />
+                <label className="mb-1 block text-sm font-medium">Opis</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full rounded border bg-black/40 px-3 py-2 text-white"
+                  rows={3}
+                />
               </div>
 
               <div className="rounded border border-white/10 bg-black/30 p-3">
@@ -518,7 +670,11 @@ export function Upload() {
                     disabled={!activeItem || !!activeItem.error || !!activeItem.isRemovingBg}
                     className="shrink-0"
                   >
-                    {activeItem?.isRemovingBg ? 'Przetwarzanie...' : activeItem?.processedPreviewUrl ? 'Usun ponownie' : 'Usun tlo'}
+                    {activeItem?.isRemovingBg
+                      ? 'Przetwarzanie...'
+                      : activeItem?.processedPreviewUrl
+                        ? 'Usun ponownie'
+                        : 'Usun tlo'}
                   </Button>
                 </div>
               </div>
@@ -527,15 +683,22 @@ export function Upload() {
                 <Button
                   type="button"
                   onClick={saveActiveItem}
-                  disabled={!selectedType || !activeItem || !!activeItem.error}
-                  className={`px-4 py-2 ${!selectedType || !activeItem || activeItem.error ? 'opacity-50 pointer-events-none' : ''} bg-white text-black`}
+                  disabled={!activeItem || !!activeItem.error}
+                  className={`bg-white px-4 py-2 text-black ${
+                    !activeItem || activeItem.error ? 'opacity-50' : ''
+                  }`}
                 >
                   Zapisz
                 </Button>
                 <Button type="button" variant="ghost" onClick={clearPendingItems}>
                   Anuluj
                 </Button>
-                <Button type="button" variant="ghost" onClick={() => inputRef.current?.click()} className="hidden sm:inline-flex">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => inputRef.current?.click()}
+                  className="hidden sm:inline-flex"
+                >
                   Dodaj kolejne
                 </Button>
               </div>
@@ -544,7 +707,7 @@ export function Upload() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-Upload.displayName = 'Upload'
+Upload.displayName = 'Upload';

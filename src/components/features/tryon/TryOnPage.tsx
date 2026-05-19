@@ -1,206 +1,255 @@
-"use client"
+'use client';
 
-import React from 'react'
-import CanvasArea from './CanvasArea'
-import WardrobeSidebar from './WardrobeSidebar'
-import SavedIndicator from './SavedIndicator'
-import { DataService } from '@/lib/dataService'
-import type { Outfit } from '@/types/db'
+import React from 'react';
+import CanvasArea from './CanvasArea';
+import WardrobeSidebar from './WardrobeSidebar';
+import SavedIndicator from './SavedIndicator';
+import { DataService } from '@/lib/dataService';
+import type { Outfit } from '@/types/db';
+
+const FAVORITE_IMAGE_MAX_DIMENSION = 1000;
+const FAVORITE_IMAGE_ASPECT_RATIO = 7 / 5;
 
 export type CanvasItem = {
-  id: string
-  src: string
-  x: number
-  y: number
-  width?: number
-  height?: number
-}
+  id: string;
+  src: string;
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+};
 
-export type CanvasLayerDirection = 'front' | 'back'
+export type CanvasLayerDirection = 'front' | 'back';
 
 export default function TryOnPage() {
-  const [items, setItems] = React.useState<CanvasItem[]>([])
-  const canvasRef = React.useRef<HTMLDivElement | null>(null)
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
-  const [previewDataUrl, setPreviewDataUrl] = React.useState<string | null>(null)
-  const [previewSize, setPreviewSize] = React.useState<{ width: number; height: number } | null>(null)
-  const [outfitName, setOutfitName] = React.useState('')
-  const [outfitDescription, setOutfitDescription] = React.useState('')
-  const [saving, setSaving] = React.useState(false)
+  const [items, setItems] = React.useState<CanvasItem[]>([]);
+  const canvasRef = React.useRef<HTMLDivElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [previewDataUrl, setPreviewDataUrl] = React.useState<string | null>(null);
+  const [previewSize, setPreviewSize] = React.useState<{ width: number; height: number } | null>(
+    null
+  );
+  const [outfitName, setOutfitName] = React.useState('');
+  const [outfitDescription, setOutfitDescription] = React.useState('');
+  const [saving, setSaving] = React.useState(false);
 
   function addItem(newItem: Omit<CanvasItem, 'id'>) {
-    setItems((s) => [...s, { id: Date.now().toString(), ...newItem }])
+    setItems((s) => [...s, { id: Date.now().toString(), ...newItem }]);
   }
 
   function updateItem(id: string, patch: Partial<CanvasItem>) {
-    setItems((s) => s.map((it) => (it.id === id ? { ...it, ...patch } : it)))
+    setItems((s) => s.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   }
 
   function removeItem(id: string) {
-    setItems((s) => s.filter((it) => it.id !== id))
+    setItems((s) => s.filter((it) => it.id !== id));
   }
 
   function moveItemLayer(id: string, direction: CanvasLayerDirection) {
     setItems((current) => {
-      const item = current.find((it) => it.id === id)
-      if (!item) return current
+      const item = current.find((it) => it.id === id);
+      if (!item) return current;
 
-      const others = current.filter((it) => it.id !== id)
-      return direction === 'front' ? [...others, item] : [item, ...others]
-    })
+      const others = current.filter((it) => it.id !== id);
+      return direction === 'front' ? [...others, item] : [item, ...others];
+    });
   }
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-black text-white p-6">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Przymierzalnia</h1>
-      </header>
+    <main className="min-h-[calc(100vh-64px)] bg-black text-white">
+      <div className="app-shell">
+        <header className="app-page-header">
+          <h1 className="text-2xl font-semibold">Przymierzalnia</h1>
+        </header>
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-2 lg:flex-row">
-        <div className="relative flex flex-1 items-stretch">
-          <CanvasArea
-            items={items}
-            onAdd={addItem}
-            onUpdate={updateItem}
-            onRemove={removeItem}
-            onMoveLayer={moveItemLayer}
-            rootRef={canvasRef}
-          />
-          <SavedIndicator onOpen={async () => {
-            if (!items || items.length === 0) {
-              alert('Brak ubrań na canvasie. Dodaj ubrania aby zapisać stylizację.')
-              return
-            }
+        <div className="app-wide-panel flex flex-col gap-6 lg:flex-row">
+          <div className="relative flex flex-1 items-stretch">
+            <CanvasArea
+              items={items}
+              onAdd={addItem}
+              onUpdate={updateItem}
+              onRemove={removeItem}
+              onMoveLayer={moveItemLayer}
+              rootRef={canvasRef}
+            />
+            <SavedIndicator
+              onOpen={async () => {
+                if (!items || items.length === 0) {
+                  alert('Brak ubrań na canvasie. Dodaj ubrania aby zapisać stylizację.');
+                  return;
+                }
 
-            // generate preview thumbnail
-            const result = await generateThumbnail(items, canvasRef.current)
-            if (!result) {
-              setPreviewDataUrl(null)
-              setPreviewSize(null)
-              alert('Nie udało się wygenerować podglądu')
-              return
-            }
-            setPreviewDataUrl(result.dataUrl)
-            setPreviewSize({ width: result.width, height: result.height })
-            setOutfitName('')
-            setOutfitDescription('')
-            setIsModalOpen(true)
-          }} />
-        </div>
+                // generate preview thumbnail
+                const result = await generateThumbnail(items, canvasRef.current);
+                if (!result) {
+                  setPreviewDataUrl(null);
+                  setPreviewSize(null);
+                  alert('Nie udało się wygenerować podglądu');
+                  return;
+                }
+                setPreviewDataUrl(result.dataUrl);
+                setPreviewSize({ width: result.width, height: result.height });
+                setOutfitName('');
+                setOutfitDescription('');
+                setIsModalOpen(true);
+              }}
+            />
+          </div>
 
-        {/* Modal for saving outfit */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="w-full max-w-md rounded-xl border border-white/6 bg-[#252425] p-4 text-white shadow-sm">
-              <div className="mb-3 flex items-start justify-between gap-3">
-                <h3 className="text-lg font-semibold">Zapisz stylizację</h3>
-              </div>
+          {/* Modal for saving outfit */}
+          {isModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+              <div className="w-full max-w-md rounded-xl border border-white/6 bg-[#252425] p-4 text-white shadow-sm">
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <h3 className="text-lg font-semibold">Zapisz stylizację</h3>
+                </div>
 
-              <div
-                className="flex w-full items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-[#3a3a3a] mb-3"
-                style={previewSize ? { aspectRatio: `${previewSize.width}/${previewSize.height}` } : { height: 160 }}
-              >
-                {previewDataUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={previewDataUrl} alt="Podgląd" className="block h-auto w-full object-contain" />
-                ) : (
-                  <div className="flex w-full items-center justify-center text-white/40">Brak miniaturki</div>
-                )}
-              </div>
-
-              <label className="text-sm block mb-1">Nazwa</label>
-              <input value={outfitName} onChange={(e) => setOutfitName(e.target.value)} className="w-full rounded border border-white/6 px-3 py-2 bg-black text-white mb-2" />
-
-              <label className="text-sm block mt-2 mb-1">Opis (opcjonalnie)</label>
-              <textarea value={outfitDescription} onChange={(e) => setOutfitDescription(e.target.value)} className="w-full rounded border border-white/6 px-3 py-2 bg-black text-white" rows={3} />
-
-              <div className="mt-3 flex justify-end gap-2">
-                <button onClick={() => setIsModalOpen(false)} className="rounded px-3 py-2 bg-white text-black">Anuluj</button>
-                <button
-                  onClick={async () => {
-                    if (!previewDataUrl) return
-                    setSaving(true)
-                    try {
-                      const outfit: Outfit = {
-                        id: Date.now().toString(),
-                        name: outfitName || 'Nowy outfit',
-                        description: outfitDescription || undefined,
-                        clothingItemIds: items.map((i) => i.id),
-                        coverImageId: undefined,
-                        createdAt: new Date().toISOString(),
-                        thumbnailDataUrl: previewDataUrl,
-                      }
-                      await DataService.saveOutfit(outfit as any)
-                      setIsModalOpen(false)
-                      alert('Stylizacja zapisana')
-                    } catch (e) {
-                      console.error(e)
-                      alert('Błąd podczas zapisu')
-                    } finally {
-                      setSaving(false)
-                    }
-                  }}
-                  className="rounded px-3 py-2 bg-white text-black"
+                <div
+                  className="mb-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-[#3a3a3a]"
+                  style={
+                    previewSize
+                      ? { aspectRatio: `${previewSize.width}/${previewSize.height}` }
+                      : { height: 160 }
+                  }
                 >
-                  {saving ? 'Zapis...' : 'Zapisz'}
-                </button>
+                  {previewDataUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={previewDataUrl}
+                      alt="Podgląd"
+                      className="block h-auto w-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex w-full items-center justify-center text-white/40">
+                      Brak miniaturki
+                    </div>
+                  )}
+                </div>
+
+                <label className="mb-1 block text-sm">Nazwa</label>
+                <input
+                  value={outfitName}
+                  onChange={(e) => setOutfitName(e.target.value)}
+                  className="mb-2 w-full rounded border border-white/6 bg-black px-3 py-2 text-white"
+                />
+
+                <label className="mt-2 mb-1 block text-sm">Opis (opcjonalnie)</label>
+                <textarea
+                  value={outfitDescription}
+                  onChange={(e) => setOutfitDescription(e.target.value)}
+                  className="w-full rounded border border-white/6 bg-black px-3 py-2 text-white"
+                  rows={3}
+                />
+
+                <div className="mt-3 flex justify-end gap-2">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="rounded bg-white px-3 py-2 text-black"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!previewDataUrl) return;
+                      setSaving(true);
+                      try {
+                        const outfit: Outfit = {
+                          id: Date.now().toString(),
+                          name: outfitName || 'Nowy outfit',
+                          description: outfitDescription || undefined,
+                          clothingItemIds: items.map((i) => i.id),
+                          coverImageId: undefined,
+                          createdAt: new Date().toISOString(),
+                          thumbnailDataUrl: previewDataUrl,
+                        };
+                        await DataService.saveOutfit(outfit as any);
+                        setIsModalOpen(false);
+                        alert('Stylizacja zapisana');
+                      } catch (e) {
+                        console.error(e);
+                        alert('Błąd podczas zapisu');
+                      } finally {
+                        setSaving(false);
+                      }
+                    }}
+                    className="rounded bg-white px-3 py-2 text-black"
+                  >
+                    {saving ? 'Zapis...' : 'Zapisz'}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="w-full shrink-0 lg:w-96 xl:w-md">
-          <WardrobeSidebar />
+          <div className="w-full shrink-0 lg:w-96 xl:w-[28rem]">
+            <WardrobeSidebar />
+          </div>
         </div>
       </div>
-
     </main>
-  )
+  );
 }
 
 async function drawItemsToCanvas(items: CanvasItem[], container: HTMLDivElement | null) {
-  if (!container) return null
-  const rect = container.getBoundingClientRect()
-  const w = Math.max(200, Math.round(rect.width))
-  const h = Math.max(200, Math.round(rect.height))
+  if (!container) return null;
+  const rect = container.getBoundingClientRect();
+  const w = Math.max(200, Math.round(rect.width));
+  const h = Math.max(200, Math.round(rect.height));
 
-  const off = document.createElement('canvas')
-  off.width = w
-  off.height = h
-  const ctx = off.getContext('2d')
-  if (!ctx) return null
-  ctx.fillStyle = '#000000'
-  ctx.fillRect(0, 0, w, h)
+  const off = document.createElement('canvas');
+  off.width = w;
+  off.height = h;
+  const ctx = off.getContext('2d');
+  if (!ctx) return null;
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, w, h);
 
   for (const it of items) {
     await new Promise<void>((res) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
-          ctx.drawImage(img, it.x, it.y, it.width || 160, it.height || 220)
+          ctx.drawImage(img, it.x, it.y, it.width || 160, it.height || 220);
         } catch (e) {}
-        res()
-      }
-      img.onerror = () => res()
-      img.src = it.src
-    })
+        res();
+      };
+      img.onerror = () => res();
+      img.src = it.src;
+    });
   }
 
-  return off
+  return off;
 }
 
-async function generateThumbnail(items: CanvasItem[], container: HTMLDivElement | null): Promise<{ dataUrl: string; width: number; height: number } | null> {
-  const off = await drawItemsToCanvas(items, container)
-  if (!off) return null
+async function generateThumbnail(
+  items: CanvasItem[],
+  container: HTMLDivElement | null
+): Promise<{ dataUrl: string; width: number; height: number } | null> {
+  const off = await drawItemsToCanvas(items, container);
+  if (!off) return null;
 
-  // generate thumbnail scaled to 480px width max
-  const thumbW = 480
-  const scale = Math.min(1, thumbW / off.width)
-  const thumbCanvas = document.createElement('canvas')
-  thumbCanvas.width = Math.round(off.width * scale)
-  thumbCanvas.height = Math.round(off.height * scale)
-  const tctx = thumbCanvas.getContext('2d')
-  if (tctx) tctx.drawImage(off, 0, 0, thumbCanvas.width, thumbCanvas.height)
-  return { dataUrl: thumbCanvas.toDataURL('image/png'), width: thumbCanvas.width, height: thumbCanvas.height }
+  const outputWidth = FAVORITE_IMAGE_MAX_DIMENSION;
+  const outputHeight = Math.round(outputWidth / FAVORITE_IMAGE_ASPECT_RATIO);
+  const scale = Math.min(outputWidth / off.width, outputHeight / off.height);
+  const drawWidth = Math.round(off.width * scale);
+  const drawHeight = Math.round(off.height * scale);
+  const drawX = Math.round((outputWidth - drawWidth) / 2);
+  const drawY = Math.round((outputHeight - drawHeight) / 2);
+  const thumbCanvas = document.createElement('canvas');
+  thumbCanvas.width = outputWidth;
+  thumbCanvas.height = outputHeight;
+  const tctx = thumbCanvas.getContext('2d');
+  if (tctx) {
+    tctx.fillStyle = '#000000';
+    tctx.fillRect(0, 0, thumbCanvas.width, thumbCanvas.height);
+    tctx.imageSmoothingEnabled = true;
+    tctx.imageSmoothingQuality = 'high';
+    tctx.drawImage(off, drawX, drawY, drawWidth, drawHeight);
+  }
+  return {
+    dataUrl: thumbCanvas.toDataURL('image/png'),
+    width: thumbCanvas.width,
+    height: thumbCanvas.height,
+  };
 }
