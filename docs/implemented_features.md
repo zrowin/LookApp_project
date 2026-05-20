@@ -18,6 +18,8 @@ Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa 
 - [x] Struktura App Router: `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`
 - [x] Podstawowe strony aplikacji: dashboard, upload, wardrobe, try-on, outfits, login, register, favorites
 - [x] Komponenty bazowe UI: `Button`, `Input`, `Card`, `TopNav`
+- [x] Globalny przelacznik motywu strony dark/light w gornym pasku: `src/components/ui/ThemeToggle.tsx`
+- [x] Reguly kolorow dla light mode z poprawionym kontrastem ikon, nawigacji, kart, polek i kontrolek
 - [x] Konfiguracja TypeScript, Tailwind, ESLint i Prettier
 - [x] Klient Supabase po stronie przegladarki: `src/lib/supabase/client.ts`
 - [x] Szkielet klienta Supabase po stronie serwera/admina: `src/lib/supabase/server.ts`, `src/lib/supabase/admin.ts`
@@ -102,13 +104,16 @@ Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa 
 - [x] Drag and drop ubran z biblioteki na canvas
 - [x] Przesuwanie elementow po canvasie
 - [x] Zmiana rozmiaru elementow na canvasie
+- [x] Rotacja elementow na canvasie przez uchwyt przy obiekcie
 - [x] Usuwanie elementow z canvasu
 - [x] Zmiana kolejnosci warstw: na wierzch / pod spod
 - [x] Poprawiony kontrast canvasa i pustego stanu dla elementow po usunieciu tla: `src/components/features/tryon/CanvasArea.tsx`
+- [x] Niezalezny wybor tla pracy canvasu: ciemne, jasne i cieple, bez zmiany globalnego motywu strony
+- [x] Wybrane tlo canvasu zachowuje wyglad niezaleznie od globalnego dark/light mode
 - [x] Generowanie miniaturki stylizacji z canvasu
+- [x] Generowanie miniaturki stylizacji z aktualnie wybranym tlem canvasu
 - [x] Modal zapisu z nazwa i opisem stylizacji
 - [x] Zapis outfitu do IndexedDB przez `DataService.saveOutfit`
-- [ ] Rotacja elementow na canvasie
 - [ ] Zapis pozycji i transformacji elementow w docelowym modelu outfitu
 - [ ] Backendowe endpointy `POST /api/outfits` i `GET /api/outfits/:id`
 - [ ] Silnik heurystycznych dopasowan lub rekomendacji
@@ -133,12 +138,11 @@ Lista wdrozonych funkcjonalnosci projektu LookApp oraz zakresow, ktore nadal sa 
 - [x] Lista zapisanych stylizacji: `src/app/outfits/page.tsx`
 - [x] Redirect `/saved-outfits` do `/outfits`
 - [x] Podglad miniaturki outfitu na liscie
+- [x] Podglad zapisanej stylizacji uwzglednia tlo wybrane na canvasie podczas zapisu
 - [x] Edycja nazwy i opisu outfitu
 - [x] Usuwanie outfitu
 - [ ] Backendowe endpointy CRUD `/api/outfits`
 - [ ] Strona szczegolow pojedynczego outfitu
-- [ ] Tryb public/private
-- [ ] Eksport/share miniaturki
 - [ ] Testy CRUD i uprawnien
 
 ---

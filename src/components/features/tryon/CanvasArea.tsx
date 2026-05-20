@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { CanvasItem, CanvasLayerDirection } from './TryOnPage'
+import { CanvasBackground, CanvasBackgroundId, CanvasItem, CanvasLayerDirection } from './TryOnPage'
 
 const CANVAS_ITEM_MAX_SIZE = 220
 const CANVAS_ITEM_MIN_SIZE = 40
@@ -14,6 +14,9 @@ export default function CanvasArea({
   onRemove,
   onMoveLayer,
   rootRef,
+  background,
+  backgrounds,
+  onBackgroundChange,
 }: {
   items: CanvasItem[]
   onAdd: (item: Omit<CanvasItem, 'id'>) => void
@@ -21,6 +24,9 @@ export default function CanvasArea({
   onRemove: (id: string) => void
   onMoveLayer: (id: string, direction: CanvasLayerDirection) => void
   rootRef?: React.RefObject<HTMLDivElement | null>
+  background: CanvasBackground
+  backgrounds: CanvasBackground[]
+  onBackgroundChange: (id: CanvasBackgroundId) => void
 }) {
   const internalRef = React.useRef<HTMLDivElement | null>(null)
   const ref = rootRef ?? internalRef
@@ -40,7 +46,7 @@ export default function CanvasArea({
       const x = (e.clientX - (rect?.left || 0))
       const y = (e.clientY - (rect?.top || 0))
       const { width, height } = await getImageDisplaySize(data.src)
-      onAdd({ src: data.src, x, y, width, height })
+      onAdd({ src: data.src, x, y, width, height, rotation: 0 })
     } catch (err) {}
   }
 
@@ -52,13 +58,43 @@ export default function CanvasArea({
       onPointerDown={(e) => {
         if (e.target === e.currentTarget) setSelectedItemId(null)
       }}
-      className="relative flex-1 h-[70vh] rounded-md border border-white/6 overflow-hidden"
+      className="tryon-canvas-area relative flex-1 h-[70vh] rounded-md border border-white/6 overflow-hidden"
       style={{
-        backgroundColor: '#252425',
-        backgroundImage: 'radial-gradient(circle, #000000 1px, transparent 1px)',
+        '--tryon-canvas-bg': background.backgroundColor,
+        '--tryon-canvas-dot': background.dotColor,
+        backgroundColor: 'var(--tryon-canvas-bg)',
+        backgroundImage: 'radial-gradient(circle, var(--tryon-canvas-dot) 1px, transparent 1px)',
         backgroundSize: '18px 18px',
-      }}
+      } as React.CSSProperties}
     >
+      <div className="absolute left-3 top-3 z-20 flex items-center gap-1 rounded-md border border-white/10 bg-black/80 p-1 shadow-lg">
+        {backgrounds.map((option) => {
+          const active = option.id === background.id
+
+          return (
+            <button
+              key={option.id}
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                onBackgroundChange(option.id)
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
+              className={`flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors ${
+                active ? 'bg-white text-black' : 'text-white/75 hover:bg-white/10 hover:text-white'
+              }`}
+              aria-pressed={active}
+            >
+              <span
+                className="h-3 w-3 rounded-full border border-white/30"
+                style={{ backgroundColor: option.backgroundColor }}
+                aria-hidden="true"
+              />
+              {option.label}
+            </button>
+          )
+        })}
+      </div>
       {items.map((it, index) => (
         <CanvasItemView
           key={it.id}
@@ -76,7 +112,7 @@ export default function CanvasArea({
           parentRef={ref}
         />
       ))}
-      {items.length === 0 && <div className="absolute inset-0 flex items-center justify-center text-white/25">Przeciągnij ubrania tutaj</div>}
+      {items.length === 0 && <div className={`absolute inset-0 flex items-center justify-center ${background.emptyTextClassName}`}>Przeciągnij ubrania tutaj</div>}
     </div>
   )
 }
@@ -122,10 +158,12 @@ function CanvasItemView({
   const elRef = React.useRef<HTMLDivElement | null>(null)
   const dragging = React.useRef(false)
   const resizing = React.useRef(false)
+  const rotating = React.useRef(false)
   const offset = React.useRef({ x: 0, y: 0 })
   const resizeStart = React.useRef({ x: 0, y: 0, width: 0, height: 0 })
   const [isLayerMenuOpen, setIsLayerMenuOpen] = React.useState(false)
   const [isResizing, setIsResizing] = React.useState(false)
+  const [isRotating, setIsRotating] = React.useState(false)
 
   function onPointerDown(e: React.PointerEvent) {
     const rect = elRef.current?.getBoundingClientRect()
@@ -137,7 +175,7 @@ function CanvasItemView({
   }
 
   function onPointerMove(e: React.PointerEvent) {
-    if (!dragging.current || resizing.current || !parentRef.current) return
+    if (!dragging.current || resizing.current || rotating.current || !parentRef.current) return
     const parentRect = parentRef.current.getBoundingClientRect()
     const x = e.clientX - parentRect.left - offset.current.x
     const y = e.clientY - parentRect.top - offset.current.y
@@ -148,6 +186,41 @@ function CanvasItemView({
     dragging.current = false
     try {
       elRef.current?.releasePointerCapture(e.pointerId)
+    } catch (e) {}
+  }
+
+  function getRotationFromPointer(clientX: number, clientY: number) {
+    if (!parentRef.current) return item.rotation || 0
+
+    const parentRect = parentRef.current.getBoundingClientRect()
+    const width = item.width || 160
+    const height = item.height || 220
+    const centerX = item.x + width / 2
+    const centerY = item.y + height / 2
+    const pointerX = clientX - parentRect.left
+    const pointerY = clientY - parentRect.top
+    return (Math.atan2(pointerY - centerY, pointerX - centerX) * 180) / Math.PI + 90
+  }
+
+  function onRotatePointerDown(e: React.PointerEvent<HTMLButtonElement>) {
+    e.stopPropagation()
+    onSelect(item.id)
+    rotating.current = true
+    setIsRotating(true)
+    onUpdate(item.id, { rotation: getRotationFromPointer(e.clientX, e.clientY) })
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  function onRotatePointerMove(e: React.PointerEvent<HTMLButtonElement>) {
+    if (!rotating.current) return
+    onUpdate(item.id, { rotation: getRotationFromPointer(e.clientX, e.clientY) })
+  }
+
+  function onRotatePointerUp(e: React.PointerEvent<HTMLButtonElement>) {
+    rotating.current = false
+    setIsRotating(false)
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
     } catch (e) {}
   }
 
@@ -202,6 +275,7 @@ function CanvasItemView({
       onPointerUp={onPointerUp}
     >
       <div
+        style={{ transform: `rotate(${item.rotation || 0}deg)` }}
         className={`group relative h-full w-full rounded-md ${isSelected ? 'ring-2 ring-white/80 ring-offset-2 ring-offset-black' : ''}`}
         onPointerLeave={() => setIsLayerMenuOpen(false)}
       >
@@ -221,7 +295,7 @@ function CanvasItemView({
                   setIsLayerMenuOpen((open) => !open)
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-black/80 text-white/80 shadow-lg transition-colors hover:bg-white/10 hover:text-white"
+                className="canvas-item-control flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-black/80 text-white/80 shadow-lg transition-colors hover:bg-white/10 hover:text-white"
                 aria-label="Warstwy"
                 title="Warstwy"
               >
@@ -231,7 +305,7 @@ function CanvasItemView({
               </button>
 
               {isLayerMenuOpen && (
-                <div className="absolute left-0 top-10 z-10 flex min-w-28 flex-col rounded-md border border-white/10 bg-black/90 p-1 shadow-lg">
+                <div className="canvas-layer-menu absolute left-0 top-10 z-10 flex min-w-28 flex-col rounded-md border border-white/10 bg-black/90 p-1 shadow-lg">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -267,10 +341,28 @@ function CanvasItemView({
           onPointerDown={(e) => {
             e.stopPropagation()
           }}
-          className="pointer-events-auto absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-black opacity-0 shadow transition-opacity group-hover:opacity-100"
+          className="canvas-item-control pointer-events-auto absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-black opacity-0 shadow transition-opacity group-hover:opacity-100"
           aria-label="Usuń"
         >
           ×
+        </button>
+
+        <button
+          type="button"
+          onPointerDown={onRotatePointerDown}
+          onPointerMove={onRotatePointerMove}
+          onPointerUp={onRotatePointerUp}
+          onPointerCancel={onRotatePointerUp}
+          className={`canvas-item-control absolute left-1/2 top-1 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-black/85 text-white shadow-lg transition-colors hover:bg-white/10 ${
+            isRotating ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
+          aria-label="Obróć"
+          title="Obróć"
+        >
+          <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18.5 9.5A7 7 0 1 0 19 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M18.5 5.5v4h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
 
         <button
@@ -279,7 +371,7 @@ function CanvasItemView({
           onPointerMove={onResizePointerMove}
           onPointerUp={onResizePointerUp}
           onPointerCancel={onResizePointerUp}
-          className={`absolute -bottom-3 -right-3 flex h-8 w-8 cursor-nwse-resize items-center justify-center rounded-full border border-white/10 bg-black/80 text-white shadow-lg transition-opacity hover:bg-white/10 ${
+          className={`canvas-item-control absolute -bottom-3 -right-3 flex h-8 w-8 cursor-nwse-resize items-center justify-center rounded-full border border-white/10 bg-black/80 text-white shadow-lg transition-opacity hover:bg-white/10 ${
             isResizing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
           }`}
           aria-label="Zmień rozmiar"

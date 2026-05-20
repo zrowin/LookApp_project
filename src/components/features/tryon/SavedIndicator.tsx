@@ -13,7 +13,7 @@ export default function SavedIndicator({ onOpen }: { onOpen?: () => void }) {
       <button
         type="button"
         onClick={handleClick}
-        className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#252425] shadow-lg transition-transform hover:scale-105"
+        className="saved-indicator-button flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#252425] shadow-lg transition-transform hover:scale-105"
         aria-label="Dodaj do ulubionych"
       >
         <svg viewBox="0 0 24 24" fill="none" className="h-9 w-9" xmlns="http://www.w3.org/2000/svg">

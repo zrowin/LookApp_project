@@ -83,7 +83,7 @@ export default function WardrobeSidebar() {
   }
 
   return (
-    <aside className="h-[70vh] overflow-auto rounded-md border border-white/6 bg-[#252425] p-3">
+    <aside className="tryon-wardrobe-sidebar h-[70vh] overflow-auto rounded-md border border-white/6 bg-[#252425] p-3">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold">Twoja szafa</h3>
       </div>
@@ -116,7 +116,7 @@ export default function WardrobeSidebar() {
           return (
             <div
               key={shelf.id}
-              className="cursor-pointer rounded border border-white/6 bg-white/2 p-2 transition-colors hover:bg-white/5 focus:ring-2 focus:ring-white/20 focus:outline-none"
+              className="tryon-shelf-panel cursor-pointer rounded border border-white/6 bg-white/2 p-2 transition-colors hover:bg-white/5 focus:ring-2 focus:ring-white/20 focus:outline-none"
               onClick={() => toggleShelf(shelf.id)}
               onKeyDown={(event) => {
                 if (event.currentTarget !== event.target) return;
@@ -135,7 +135,7 @@ export default function WardrobeSidebar() {
                     event.stopPropagation();
                     toggleShelf(shelf.id);
                   }}
-                  className="rounded-md bg-transparent px-2 py-1 text-xs text-white/60"
+                  className="tryon-shelf-toggle rounded-md bg-transparent px-2 py-1 text-xs text-white/60"
                   aria-expanded={!!expanded[shelf.id]}
                 >
                   {expanded[shelf.id] ? 'Ukryj' : 'Pokaż'}
@@ -145,12 +145,12 @@ export default function WardrobeSidebar() {
               {expanded[shelf.id] && (
                 <div onClick={(event) => event.stopPropagation()}>
                   <div className="mt-3 grid grid-cols-2 gap-2">
-                    <label className="flex flex-col gap-1 text-xs text-white/50">
+                    <label className="tryon-filter-label flex flex-col gap-1 text-xs text-white/50">
                       Kolor
                       <select
                         value={filter.color}
                         onChange={(e) => updateShelfFilter(shelf.id, { color: e.target.value })}
-                        className="rounded border border-white/10 bg-black/30 px-2 py-1 text-xs text-white"
+                        className="tryon-filter-select rounded border border-white/10 bg-black/30 px-2 py-1 text-xs text-white"
                       >
                         <option value="">Wszystkie</option>
                         {colorOptions.map((color) => (
@@ -161,12 +161,12 @@ export default function WardrobeSidebar() {
                       </select>
                     </label>
 
-                    <label className="flex flex-col gap-1 text-xs text-white/50">
+                    <label className="tryon-filter-label flex flex-col gap-1 text-xs text-white/50">
                       Styl
                       <select
                         value={filter.style}
                         onChange={(e) => updateShelfFilter(shelf.id, { style: e.target.value })}
-                        className="rounded border border-white/10 bg-black/30 px-2 py-1 text-xs text-white"
+                        className="tryon-filter-select rounded border border-white/10 bg-black/30 px-2 py-1 text-xs text-white"
                       >
                         <option value="">Wszystkie</option>
                         {styleOptions.map((style) => (

@@ -10,11 +10,50 @@ import type { Outfit } from '@/types/db';
 const FAVORITE_IMAGE_MAX_DIMENSION = 1000;
 const FAVORITE_IMAGE_ASPECT_RATIO = 7 / 5;
 
+export type CanvasBackgroundId = 'dark' | 'light' | 'warm';
+
+export type CanvasBackground = {
+  id: CanvasBackgroundId;
+  label: string;
+  backgroundColor: string;
+  dotColor: string;
+  emptyTextClassName: string;
+};
+
+export const CANVAS_BACKGROUNDS: CanvasBackground[] = [
+  {
+    id: 'dark',
+    label: 'Ciemne',
+    backgroundColor: '#252425',
+    dotColor: '#000000',
+    emptyTextClassName: 'text-white/25',
+  },
+  {
+    id: 'light',
+    label: 'Jasne',
+    backgroundColor: '#f3f3f0',
+    dotColor: '#111111',
+    emptyTextClassName: 'text-black/35',
+  },
+  {
+    id: 'warm',
+    label: 'Ciepłe',
+    backgroundColor: '#ded8ce',
+    dotColor: '#4f4940',
+    emptyTextClassName: 'text-black/35',
+  },
+];
+
+function getCanvasBackground(id: CanvasBackgroundId) {
+  return CANVAS_BACKGROUNDS.find((background) => background.id === id) ?? CANVAS_BACKGROUNDS[0];
+}
+
 export type CanvasItem = {
   id: string;
   src: string;
   x: number;
   y: number;
+  rotation?: number;
   width?: number;
   height?: number;
 };
@@ -32,6 +71,8 @@ export default function TryOnPage() {
   const [outfitName, setOutfitName] = React.useState('');
   const [outfitDescription, setOutfitDescription] = React.useState('');
   const [saving, setSaving] = React.useState(false);
+  const [canvasBackgroundId, setCanvasBackgroundId] = React.useState<CanvasBackgroundId>('dark');
+  const canvasBackground = getCanvasBackground(canvasBackgroundId);
 
   function addItem(newItem: Omit<CanvasItem, 'id'>) {
     setItems((s) => [...s, { id: Date.now().toString(), ...newItem }]);
@@ -71,6 +112,9 @@ export default function TryOnPage() {
               onRemove={removeItem}
               onMoveLayer={moveItemLayer}
               rootRef={canvasRef}
+              background={canvasBackground}
+              backgrounds={CANVAS_BACKGROUNDS}
+              onBackgroundChange={setCanvasBackgroundId}
             />
             <SavedIndicator
               onOpen={async () => {
@@ -80,7 +124,7 @@ export default function TryOnPage() {
                 }
 
                 // generate preview thumbnail
-                const result = await generateThumbnail(items, canvasRef.current);
+                const result = await generateThumbnail(items, canvasRef.current, canvasBackground);
                 if (!result) {
                   setPreviewDataUrl(null);
                   setPreviewSize(null);
@@ -190,7 +234,30 @@ export default function TryOnPage() {
   );
 }
 
-async function drawItemsToCanvas(items: CanvasItem[], container: HTMLDivElement | null) {
+function drawCanvasBackground(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  background: CanvasBackground
+) {
+  ctx.fillStyle = background.backgroundColor;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = background.dotColor;
+  for (let x = 0; x < width; x += 18) {
+    for (let y = 0; y < height; y += 18) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+async function drawItemsToCanvas(
+  items: CanvasItem[],
+  container: HTMLDivElement | null,
+  background: CanvasBackground
+) {
   if (!container) return null;
   const rect = container.getBoundingClientRect();
   const w = Math.max(200, Math.round(rect.width));
@@ -201,8 +268,7 @@ async function drawItemsToCanvas(items: CanvasItem[], container: HTMLDivElement 
   off.height = h;
   const ctx = off.getContext('2d');
   if (!ctx) return null;
-  ctx.fillStyle = '#000000';
-  ctx.fillRect(0, 0, w, h);
+  drawCanvasBackground(ctx, w, h, background);
 
   for (const it of items) {
     await new Promise<void>((res) => {
@@ -210,7 +276,17 @@ async function drawItemsToCanvas(items: CanvasItem[], container: HTMLDivElement 
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
-          ctx.drawImage(img, it.x, it.y, it.width || 160, it.height || 220);
+          const width = it.width || 160;
+          const height = it.height || 220;
+          const rotation = ((it.rotation || 0) * Math.PI) / 180;
+          const centerX = it.x + width / 2;
+          const centerY = it.y + height / 2;
+
+          ctx.save();
+          ctx.translate(centerX, centerY);
+          ctx.rotate(rotation);
+          ctx.drawImage(img, -width / 2, -height / 2, width, height);
+          ctx.restore();
         } catch (e) {}
         res();
       };
@@ -224,9 +300,10 @@ async function drawItemsToCanvas(items: CanvasItem[], container: HTMLDivElement 
 
 async function generateThumbnail(
   items: CanvasItem[],
-  container: HTMLDivElement | null
+  container: HTMLDivElement | null,
+  background: CanvasBackground
 ): Promise<{ dataUrl: string; width: number; height: number } | null> {
-  const off = await drawItemsToCanvas(items, container);
+  const off = await drawItemsToCanvas(items, container, background);
   if (!off) return null;
 
   const outputWidth = FAVORITE_IMAGE_MAX_DIMENSION;
@@ -241,7 +318,7 @@ async function generateThumbnail(
   thumbCanvas.height = outputHeight;
   const tctx = thumbCanvas.getContext('2d');
   if (tctx) {
-    tctx.fillStyle = '#000000';
+    tctx.fillStyle = background.backgroundColor;
     tctx.fillRect(0, 0, thumbCanvas.width, thumbCanvas.height);
     tctx.imageSmoothingEnabled = true;
     tctx.imageSmoothingQuality = 'high';

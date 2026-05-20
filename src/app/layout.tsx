@@ -63,8 +63,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <TopNav />
-        <div className="pt-0">{children}</div>
+        <div id="app-shell">
+          <TopNav />
+          <div className="pt-0">{children}</div>
+        </div>
       </body>
     </html>
   )
