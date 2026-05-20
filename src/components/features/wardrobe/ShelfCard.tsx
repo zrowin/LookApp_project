@@ -136,11 +136,11 @@ export default function ShelfCard({
               return (
                 <div
                   key={i}
-                  className="aspect-square w-full overflow-hidden rounded-xl"
+                  className="flex h-28 w-full items-center justify-center rounded-xl p-2 md:h-32"
                   style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
                 >
                   {url ? (
-                    <img src={url} alt={`${name}-${i}`} className="h-full w-full object-contain" />
+                    <img src={url} alt={`${name}-${i}`} className="h-full w-full object-scale-down" />
                   ) : null}
                 </div>
               );
@@ -148,7 +148,7 @@ export default function ShelfCard({
           : Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-square w-full overflow-hidden rounded-xl"
+                className="h-28 w-full rounded-xl md:h-32"
                 style={{ backgroundColor: '#3a3a3a', border: '1px solid rgba(255,255,255,0.04)' }}
               />
             ))}

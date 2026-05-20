@@ -128,9 +128,13 @@ export default function ShelfDetailPage() {
                 key={t.id}
                 className="masonry-item group relative overflow-hidden rounded-2xl border border-white/5 bg-[#3a3a3a]"
               >
-                <div className="w-full overflow-hidden">
+                <div className="flex max-h-64 min-h-32 w-full items-center justify-center overflow-hidden">
                   {resolveImageUrl(t) ? (
-                    <img src={resolveImageUrl(t)} alt={`item-${i}`} className="masonry-photo" />
+                    <img
+                      src={resolveImageUrl(t)}
+                      alt={`item-${i}`}
+                      className="max-h-64 max-w-full object-contain"
+                    />
                   ) : null}
                 </div>
 
