@@ -496,7 +496,12 @@ export function Upload() {
               )}
 
               <div className="sm:hidden">
-                <Button type="button" onClick={() => inputRef.current?.click()} variant="ghost">
+                <Button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  variant="ghost"
+                  className="upload-add-more-button"
+                >
                   Dodaj kolejne zdjęcia
                 </Button>
               </div>
@@ -697,7 +702,7 @@ export function Upload() {
                   type="button"
                   variant="ghost"
                   onClick={() => inputRef.current?.click()}
-                  className="hidden sm:inline-flex"
+                  className="upload-add-more-button hidden sm:inline-flex"
                 >
                   Dodaj kolejne
                 </Button>

@@ -353,9 +353,9 @@ function CanvasItemView({
           onPointerMove={onRotatePointerMove}
           onPointerUp={onRotatePointerUp}
           onPointerCancel={onRotatePointerUp}
-          className={`canvas-item-control absolute left-1/2 top-1 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-black/85 text-white shadow-lg transition-colors hover:bg-white/10 ${
+          className={`canvas-item-control absolute left-1/2 top-1 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-black/85 text-white shadow-lg opacity-0 transition-[opacity,background-color] group-hover:opacity-100 hover:bg-white/10 ${
             isRotating ? 'cursor-grabbing' : 'cursor-grab'
-          }`}
+          } ${isRotating ? 'opacity-100' : ''}`}
           aria-label="Obróć"
           title="Obróć"
         >

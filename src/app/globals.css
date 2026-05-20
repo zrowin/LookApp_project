@@ -186,6 +186,28 @@
     background-image: radial-gradient(circle, var(--tryon-canvas-dot) 1px, transparent 1px) !important;
   }
 
+  #app-shell .upload-add-more-button {
+    background-color: #3a3a3a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  #app-shell .upload-add-more-button:hover {
+    background-color: #4a4a4a;
+    color: #ffffff;
+  }
+
+  [data-theme='light'] #app-shell .upload-add-more-button {
+    background-color: #dadbda !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .upload-add-more-button:hover {
+    background-color: #c5c5c5 !important;
+    color: #000000 !important;
+  }
+
   #app-shell .shelf-action-button {
     background-color: transparent;
   }
