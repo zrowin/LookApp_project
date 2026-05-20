@@ -11,6 +11,223 @@
 }
 
 @layer utilities {
+  [data-theme='light'] #app-shell {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  [data-theme='light'] body {
+    background: #ffffff;
+  }
+
+  [data-theme='light'] #app-shell [class~='bg-black'],
+  [data-theme='light'] #app-shell [class~='bg-black/30'],
+  [data-theme='light'] #app-shell [class~='bg-black/40'],
+  [data-theme='light'] #app-shell [class~='bg-black/60'],
+  [data-theme='light'] #app-shell [class~='bg-black/80'],
+  [data-theme='light'] #app-shell [class~='bg-black/85'],
+  [data-theme='light'] #app-shell [class~='bg-black/90'] {
+    background-color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell [class~='bg-[#252425]'],
+  [data-theme='light'] #app-shell [style*='#252425'],
+  [data-theme='light'] #app-shell [style*='rgb(37, 36, 37)'] {
+    background-color: #dadbda !important;
+  }
+
+  [data-theme='light'] #app-shell [class~='bg-[#3a3a3a]'],
+  [data-theme='light'] #app-shell [style*='#3a3a3a'],
+  [data-theme='light'] #app-shell [style*='rgb(58, 58, 58)'] {
+    background-color: #c5c5c5 !important;
+  }
+
+  [data-theme='light'] #app-shell [class~='bg-white'],
+  [data-theme='light'] #app-shell [class~='bg-white/2'],
+  [data-theme='light'] #app-shell [class~='bg-white/5'],
+  [data-theme='light'] #app-shell [class~='bg-white/10'] {
+    background-color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell [class~='text-white'],
+  [data-theme='light'] #app-shell [class*='text-white/'],
+  [data-theme='light'] #app-shell [class~='text-gray-100'],
+  [data-theme='light'] #app-shell [class~='text-gray-300'],
+  [data-theme='light'] #app-shell [class~='text-gray-400'],
+  [data-theme='light'] #app-shell [class~='text-gray-500'],
+  [data-theme='light'] #app-shell [class~='text-gray-600'] {
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell [class~='text-black'] {
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell [class*='border-white/'],
+  [data-theme='light'] #app-shell [class~='border-gray-600'],
+  [data-theme='light'] #app-shell [class~='border-gray-700'] {
+    border-color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  [data-theme='light'] #app-shell [class~='border-black'],
+  [data-theme='light'] #app-shell [class~='border-gray-200'],
+  [data-theme='light'] #app-shell [class~='border-gray-300'] {
+    border-color: rgba(255, 255, 255, 0.18) !important;
+  }
+
+  [data-theme='light'] #app-shell input,
+  [data-theme='light'] #app-shell textarea,
+  [data-theme='light'] #app-shell select {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: rgba(0, 0, 0, 0.18) !important;
+  }
+
+  [data-theme='light'] #app-shell ::placeholder {
+    color: rgba(0, 0, 0, 0.45) !important;
+  }
+
+  [data-theme='light'] #app-shell svg {
+    color: currentColor;
+  }
+
+  [data-theme='light'] #app-shell button svg,
+  [data-theme='light'] #app-shell a svg {
+    opacity: 1;
+  }
+
+  [data-theme='light'] #app-shell .top-nav {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell .top-nav-link,
+  [data-theme='light'] #app-shell .top-nav-theme-toggle,
+  [data-theme='light'] #app-shell .top-nav-icon {
+    color: rgba(255, 255, 255, 0.82) !important;
+  }
+
+  [data-theme='light'] #app-shell .top-nav-theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell .top-nav-link.is-active {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .top-nav-link.is-active .top-nav-icon {
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .canvas-item-control,
+  [data-theme='light'] #app-shell .saved-indicator-button {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell .canvas-item-control:hover,
+  [data-theme='light'] #app-shell .saved-indicator-button:hover {
+    background-color: #1f1f1f !important;
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell .canvas-layer-menu {
+    background-color: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.16) !important;
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .canvas-layer-menu button {
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-wardrobe-sidebar {
+    background-color: #dadbda !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-shelf-panel {
+    background-color: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-shelf-panel:hover {
+    background-color: #f2f2f2 !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-shelf-toggle,
+  [data-theme='light'] #app-shell .tryon-filter-label {
+    color: rgba(0, 0, 0, 0.72) !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-filter-select {
+    background-color: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.22) !important;
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-draggable-item {
+    background-color: #f1f1f1 !important;
+  }
+
+  #app-shell .tryon-canvas-area {
+    background-color: var(--tryon-canvas-bg) !important;
+    background-image: radial-gradient(circle, var(--tryon-canvas-dot) 1px, transparent 1px) !important;
+  }
+
+  [data-theme='light'] #app-shell .tryon-canvas-area {
+    background-color: var(--tryon-canvas-bg) !important;
+    background-image: radial-gradient(circle, var(--tryon-canvas-dot) 1px, transparent 1px) !important;
+  }
+
+  #app-shell .shelf-action-button {
+    background-color: transparent;
+  }
+
+  #app-shell .shelf-action-button--edit {
+    color: #ffffff;
+  }
+
+  #app-shell .shelf-action-button--edit:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  #app-shell .shelf-action-button--delete:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+  }
+
+  [data-theme='light'] #app-shell .shelf-action-button {
+    background-color: transparent !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  }
+
+  [data-theme='light'] #app-shell .shelf-action-button--edit {
+    color: #000000 !important;
+  }
+
+  [data-theme='light'] #app-shell .shelf-action-button--edit:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell .shelf-action-button--delete {
+    color: #b91c1c !important;
+  }
+
+  [data-theme='light'] #app-shell .shelf-action-button--delete:hover {
+    background-color: #b91c1c !important;
+    border-color: #b91c1c !important;
+    color: #ffffff !important;
+  }
+
   .app-shell {
     width: 100%;
     max-width: 118rem;

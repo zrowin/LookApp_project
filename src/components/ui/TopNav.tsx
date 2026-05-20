@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import ThemeToggle from './ThemeToggle';
 
 function NavButton({
   href,
@@ -20,17 +21,18 @@ function NavButton({
       href={href}
       aria-label={label}
       aria-current={active ? 'page' : undefined}
-      className={`flex flex-col items-center gap-1 rounded-md px-3 py-2 transition-transform hover:scale-105 ${
+      className={`top-nav-link flex flex-col items-center gap-1 rounded-md px-3 py-2 transition-transform hover:scale-105 ${
+        active ? 'is-active' : ''
+      } ${
         active ? 'bg-gray-100 text-black shadow-sm' : 'text-gray-600'
       }`}
     >
       <div
-        className={`flex h-8 w-8 items-center justify-center ${active ? 'text-black' : 'text-gray-600'}`}
-        style={{ color: '#252425' }}
+        className={`top-nav-icon flex h-8 w-8 items-center justify-center ${active ? 'text-black' : 'text-gray-600'}`}
       >
         {children}
       </div>
-      <span className="text-xs">{label}</span>
+      <span className="text-xs leading-none">{label}</span>
     </Link>
   );
 }
@@ -42,7 +44,7 @@ export default function TopNav() {
   if (pathname === '/') return null;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white text-black">
+    <nav className="top-nav sticky top-0 z-50 w-full border-b border-gray-200 bg-white text-black">
       <div className="mx-auto flex w-full max-w-[118rem] items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
         <div className="flex items-center gap-4">
           <Link
@@ -141,6 +143,8 @@ export default function TopNav() {
               />
             </svg>
           </NavButton>
+
+          <ThemeToggle />
         </div>
       </div>
     </nav>

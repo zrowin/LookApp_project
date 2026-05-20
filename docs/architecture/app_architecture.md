@@ -47,6 +47,14 @@ Główne widoki (zgodnie z dokumentacją):
 - Outfits (lista) / Outfit Detail
 - Settings / Billing
 
+Aktualny stan web MVP:
+- Aplikacja web dziala jako Next.js App Router z UI opartym o komponenty w `src/components/ui` oraz feature modules w `src/components/features`.
+- Globalny motyw strony dark/light jest obslugiwany po stronie klienta przez `ThemeToggle` i atrybut `data-theme` na elemencie `html`; light mode jest warstwa prezentacyjna CSS, niezalezna od danych domenowych.
+- Przymierzalnia (`try-on`) jest klientowym builderem stylizacji: drag and drop z polek, przesuwanie, zmiana rozmiaru, rotacja, usuwanie i zmiana kolejnosci warstw.
+- Canvas przymierzalni ma osobny wybor tla pracy (`dark`, `light`, `warm`), niezalezny od globalnego motywu strony.
+- Miniaturka outfitu generowana na kliencie zapisuje aktualne tlo canvasu razem z ulozeniem ubran, dzieki czemu widok ulubionych pokazuje stylizacje z tlem wybranym w momencie zapisu.
+- Dane polek sa obecnie utrzymywane lokalnie (`localStorage` przez `src/lib/shelves.ts`), a zapisane outfity lokalnie przez `DataService`/IndexedDB; backendowy CRUD pozostaje docelowym kierunkiem.
+
 Komunikacja z backendem:
 - REST over HTTPS (JSON). Preferowane: Next.js API / Supabase endpoints for simple CRUD; Edge Functions for heavier integrations.
 - Autoryzacja: każdy request do chronionych endpointów wysyła Authorization: Bearer <access_token> (Supabase JWT). TanStack Query dba o odświeżanie tokenów.
@@ -109,7 +117,7 @@ Wybór: RESTful JSON endpoints (proste, czytelne). Krytyczne endpointy (przykła
 
 - POST /api/outfits
   - opis: tworzy outfit
-  - body: { title, description, items: [{image_id, x, y, scale, rotation, z_index}], is_public }
+  - body: { title, description, canvas_background, items: [{image_id, x, y, scale, rotation, z_index}], is_public }
   - response 201: { outfitId }
 
 - GET /api/outfits/:id
@@ -137,13 +145,15 @@ Główne tabele / schematy (skrót):
 - `images` (id, owner_id, original_url, processed_url, thumbnail_url, status, width, height, file_size, created_at)
 - `tags` (id, name, category)
 - `image_tags` (image_id, tag_id)
-- `outfits` (id, owner_id, title, description, thumbnail_url, is_public, created_at)
+- `outfits` (id, owner_id, title, description, thumbnail_url, canvas_background lub canvas_settings JSONB, is_public, created_at)
 - `outfit_items` (id, outfit_id, image_id, x, y, scale, rotation, z_index)
 - `subscriptions` (user_id, stripe_customer_id, plan, status, current_period_end)
 - `follow_relations` (follower_id, followee_id, created_at)
 - `image_embeddings` (image_id, embedding vector) — pgvector
 
 Relacje: standardowe relacje FK; obrazy należą do użytkownika, outfit_items łączą outfit z obrazem.
+
+Uwaga implementacyjna MVP: aktualny zapis outfitu przechowuje wygenerowana miniaturke jako `thumbnailDataUrl` w lokalnym store. Docelowy backend powinien zapisac miniaturke jako plik w Storage/CDN oraz przechowac `thumbnail_url` i ustawienia canvasu w tabeli `outfits`.
 
 Przykładowy model `images` (JSON):
 {

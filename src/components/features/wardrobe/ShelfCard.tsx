@@ -72,7 +72,7 @@ export default function ShelfCard({
               event.stopPropagation();
               onRename(id);
             }}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="shelf-action-button shelf-action-button--edit flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-transparent text-white transition-colors"
             aria-label="Edytuj półkę"
             type="button"
           >
@@ -102,7 +102,7 @@ export default function ShelfCard({
               event.stopPropagation();
               onDelete(id);
             }}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+            className="shelf-action-button shelf-action-button--delete flex h-8 w-8 items-center justify-center rounded-md border border-red-400/30 bg-transparent text-red-400 transition-colors"
             aria-label="Usuń półkę"
             type="button"
           >
