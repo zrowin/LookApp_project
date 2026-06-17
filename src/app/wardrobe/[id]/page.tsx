@@ -110,11 +110,21 @@ export default function ShelfDetailPage() {
         />
 
         <div className="app-page-header">
-          <div>
+          <div className="w-full">
             <button onClick={() => router.push('/wardrobe')} className="text-sm text-gray-400">
               ← Powrót
             </button>
-            <h1 className="mt-2 text-2xl font-semibold">{shelf.name}</h1>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+              <h1 className="text-2xl font-semibold">{shelf.name}</h1>
+              <button
+                type="button"
+                onClick={openShelfUpload}
+                aria-label={`Dodaj ubranie do półki ${shelf.name}`}
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-transparent px-4 py-2 text-sm text-white transition hover:bg-gray-800"
+              >
+                + Dodaj ubranie do półki
+              </button>
+            </div>
             <div className="mt-1 text-sm text-gray-400">{shelf.thumbnails.length} items</div>
           </div>
         </div>
@@ -160,14 +170,6 @@ export default function ShelfDetailPage() {
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={openShelfUpload}
-        aria-label={`Dodaj zdjęcie do półki ${shelf.name}`}
-        className="fixed bottom-8 left-1/2 z-40 flex h-20 w-20 -translate-x-1/2 items-center justify-center rounded-3xl bg-white text-5xl leading-none font-light text-black shadow-2xl shadow-black/40 transition-transform hover:scale-105 focus:ring-2 focus:ring-white/50 focus:outline-none"
-      >
-        +
-      </button>
     </main>
   );
 }
