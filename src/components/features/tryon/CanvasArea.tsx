@@ -164,6 +164,9 @@ function CanvasItemView({
   const [isLayerMenuOpen, setIsLayerMenuOpen] = React.useState(false)
   const [isResizing, setIsResizing] = React.useState(false)
   const [isRotating, setIsRotating] = React.useState(false)
+  const controlsVisibilityClass = isSelected
+    ? 'opacity-100'
+    : 'opacity-0 group-hover:opacity-100'
 
   function onPointerDown(e: React.PointerEvent) {
     const rect = elRef.current?.getBoundingClientRect()
@@ -284,7 +287,7 @@ function CanvasItemView({
         {hasMultipleItems && (
           <div
             className={`absolute left-2 top-2 transition-opacity ${
-              isLayerMenuOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              isLayerMenuOpen ? 'opacity-100' : controlsVisibilityClass
             }`}
           >
             <div className="relative">
@@ -337,11 +340,14 @@ function CanvasItemView({
         )}
 
         <button
-          onClick={() => onRemove(item.id)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove(item.id)
+          }}
           onPointerDown={(e) => {
             e.stopPropagation()
           }}
-          className="canvas-item-control pointer-events-auto absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-black opacity-0 shadow transition-opacity group-hover:opacity-100"
+          className={`canvas-item-control pointer-events-auto absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white text-base text-black shadow transition-opacity ${controlsVisibilityClass}`}
           aria-label="Usuń"
         >
           ×
@@ -353,9 +359,9 @@ function CanvasItemView({
           onPointerMove={onRotatePointerMove}
           onPointerUp={onRotatePointerUp}
           onPointerCancel={onRotatePointerUp}
-          className={`canvas-item-control absolute left-1/2 top-1 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-black/85 text-white shadow-lg opacity-0 transition-[opacity,background-color] group-hover:opacity-100 hover:bg-white/10 ${
+          className={`canvas-item-control absolute left-1/2 top-1 flex h-9 w-9 -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-black/85 text-white shadow-lg transition-[opacity,background-color] hover:bg-white/10 ${
             isRotating ? 'cursor-grabbing' : 'cursor-grab'
-          } ${isRotating ? 'opacity-100' : ''}`}
+          } ${isRotating ? 'opacity-100' : controlsVisibilityClass}`}
           aria-label="Obróć"
           title="Obróć"
         >
@@ -371,8 +377,8 @@ function CanvasItemView({
           onPointerMove={onResizePointerMove}
           onPointerUp={onResizePointerUp}
           onPointerCancel={onResizePointerUp}
-          className={`canvas-item-control absolute -bottom-3 -right-3 flex h-8 w-8 cursor-nwse-resize items-center justify-center rounded-full border border-white/10 bg-black/80 text-white shadow-lg transition-opacity hover:bg-white/10 ${
-            isResizing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+          className={`canvas-item-control absolute -bottom-3 -right-3 flex h-10 w-10 cursor-nwse-resize items-center justify-center rounded-full border border-white/10 bg-black/80 text-white shadow-lg transition-opacity hover:bg-white/10 ${
+            isResizing ? 'opacity-100' : controlsVisibilityClass
           }`}
           aria-label="Zmień rozmiar"
           title="Zmień rozmiar"
