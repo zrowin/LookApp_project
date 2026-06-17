@@ -168,6 +168,10 @@ function CanvasItemView({
     ? 'opacity-100'
     : 'opacity-0 group-hover:opacity-100'
 
+  React.useEffect(() => {
+    if (!isSelected) setIsLayerMenuOpen(false)
+  }, [isSelected])
+
   function onPointerDown(e: React.PointerEvent) {
     const rect = elRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -280,7 +284,9 @@ function CanvasItemView({
       <div
         style={{ transform: `rotate(${item.rotation || 0}deg)` }}
         className={`group relative h-full w-full rounded-md ${isSelected ? 'ring-2 ring-white/80 ring-offset-2 ring-offset-black' : ''}`}
-        onPointerLeave={() => setIsLayerMenuOpen(false)}
+        onPointerLeave={(e) => {
+          if (e.pointerType === 'mouse') setIsLayerMenuOpen(false)
+        }}
       >
         <img src={item.src} alt="item" className="w-full h-full object-contain rounded-md shadow-lg" draggable={false} />
 
