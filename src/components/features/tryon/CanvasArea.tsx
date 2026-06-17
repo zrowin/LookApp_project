@@ -295,9 +295,13 @@ function CanvasItemView({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation()
+                }}
+                onPointerDown={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onSelect(item.id)
                   setIsLayerMenuOpen((open) => !open)
                 }}
-                onPointerDown={(e) => e.stopPropagation()}
                 className="canvas-item-control flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-black/80 text-white/80 shadow-lg transition-colors hover:bg-white/10 hover:text-white"
                 aria-label="Warstwy"
                 title="Warstwy"
@@ -313,11 +317,14 @@ function CanvasItemView({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation()
+                    }}
+                    onPointerDown={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
                       onMoveLayer(item.id, 'front')
                       setIsLayerMenuOpen(false)
                     }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    className="rounded px-2 py-1 text-left text-xs text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    className="rounded px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Na wierzch
                   </button>
@@ -325,11 +332,14 @@ function CanvasItemView({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation()
+                    }}
+                    onPointerDown={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
                       onMoveLayer(item.id, 'back')
                       setIsLayerMenuOpen(false)
                     }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    className="rounded px-2 py-1 text-left text-xs text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    className="rounded px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Pod spód
                   </button>
