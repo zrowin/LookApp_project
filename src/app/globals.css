@@ -113,6 +113,16 @@
     color: #ffffff !important;
   }
 
+  [data-theme='light'] #app-shell .top-nav-mobile-trigger,
+  [data-theme='light'] #app-shell .top-nav-mobile-item {
+    color: #ffffff !important;
+  }
+
+  [data-theme='light'] #app-shell .top-nav-mobile-menu {
+    background-color: #252425 !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+  }
+
   [data-theme='light'] #app-shell .top-nav-link.is-active {
     background-color: #ffffff !important;
     color: #000000 !important;
