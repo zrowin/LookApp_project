@@ -11,6 +11,7 @@ const COLOR_OPTIONS = [
   { label: 'Biały', value: 'biały', swatch: '#ffffff' },
   { label: 'Szary', value: 'szary', swatch: '#8a8a8a' },
   { label: 'Beżowy', value: 'beżowy', swatch: '#d8c3a5' },
+  { label: 'Brązowy', value: 'brązowy', swatch: '#8b5a2b' },
   { label: 'Żółty', value: 'żółty', swatch: '#facc15' },
   { label: 'Pomarańczowy', value: 'pomarańczowy', swatch: '#f97316' },
   { label: 'Czerwony', value: 'czerwony', swatch: '#ef4444' },
